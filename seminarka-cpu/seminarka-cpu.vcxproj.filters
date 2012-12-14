@@ -24,6 +24,9 @@
     <None Include="simple.geom">
       <Filter>Resource Files\Source Files</Filter>
     </None>
+    <None Include="GPUComputation.cuh">
+      <Filter>Header Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -36,6 +39,9 @@
       <Filter>Resource Files\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CPUMarchingCubes.cpp">
+      <Filter>Resource Files\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GPUSimulation.cpp">
       <Filter>Resource Files\Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -61,5 +67,13 @@
     <ClInclude Include="CPUMarchingCubes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GPUSimulation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CudaCompile Include="GPUComputation.cu">
+      <Filter>Resource Files\Source Files</Filter>
+    </CudaCompile>
   </ItemGroup>
 </Project>

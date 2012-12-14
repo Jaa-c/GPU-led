@@ -29,6 +29,7 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 5.0.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -48,8 +49,8 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>../common/GLFW/msvc10;../common/AntTweakBar;../common/GLEW;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opengl32.lib;glu32.lib;glfw.lib;glew32.lib;glut32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../common/GLFW/msvc10;../common/AntTweakBar;$(CudaToolkitLibDir)/cudart.lib;$(CudaToolkitLibDir)/curand.lib;../common/GLEW;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;glu32.lib;glfw.lib;glew32.lib;glut32.lib;cudart.lib;curand.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -66,6 +67,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="GPUComputation.cuh" />
     <None Include="simple.frag" />
     <None Include="simple.geom" />
     <None Include="simple.vert" />
@@ -73,6 +75,7 @@
   <ItemGroup>
     <ClCompile Include="CPUMarchingCubes.cpp" />
     <ClCompile Include="CPUSimulation.cpp" />
+    <ClCompile Include="GPUSimulation.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Voxel.cpp" />
   </ItemGroup>
@@ -80,12 +83,17 @@
     <ClInclude Include="CPUMarchingCubes.h" />
     <ClInclude Include="CPUSimulation.h" />
     <ClInclude Include="defines.h" />
+    <ClInclude Include="GPUSimulation.h" />
     <ClInclude Include="lookup.h" />
     <ClInclude Include="Simulation.h" />
     <ClInclude Include="structures.h" />
     <ClInclude Include="voxel.h" />
   </ItemGroup>
+  <ItemGroup>
+    <CudaCompile Include="GPUComputation.cu" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 5.0.targets" />
   </ImportGroup>
 </Project>

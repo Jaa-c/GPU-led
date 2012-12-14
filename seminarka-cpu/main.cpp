@@ -5,12 +5,11 @@
 //-----------------------------------------------------------------------------
 #define USE_ANTTWEAKBAR
 
-#include "../common/common.h"
 #include <iostream>
 #include <time.h>
-//#include "structures.h"
-//#include "voxel.h"
+#include "../common/common.h"
 #include "CPUSimulation.h"
+#include "GPUSimulation.h"
 #include "CPUMarchingCubes.h"
 
 /************************************************
@@ -50,7 +49,6 @@ int realDataCount				= dataCount;
 *				Deprecated			    *
 ************************************************/
 GLfloat* dataPoints				= NULL;   //seznam bodu pro vykresleni
-//Voxel data[dataWidth][dataHeight][dataDepth]; //datova mrizka
 
 // GLSL variables
 GLuint g_ProgramId = 0; // Shader program id
@@ -67,145 +65,7 @@ void TW_CALL cbCompileShaderProgram(void *clientData);
 ************************************************/
 Simulation* simulation;
 
-Voxel * data;
-
 void initGUI();
-void getData();
-void initData();
-void doTheMath();
-
-
-//-----------------------------------------------------------------------------
-// Name: vMarchCube()
-// Desc: 
-//-----------------------------------------------------------------------------
-
-//vypocet normaly trojuhelnika
-void vectProduct(GLvector* normal, const GLvector* v1, const GLvector* v2, const GLvector* v3) {
-	normal->fX = (v1->fY - v2->fY) * (v3->fZ - v1->fZ) - (v1->fZ - v2->fZ) * (v3->fY - v1->fY);
-	normal->fY = (v1->fZ - v2->fZ) * (v3->fX - v1->fX) - (v1->fX - v2->fX) * (v3->fZ - v1->fZ);
-	normal->fZ = (v1->fX - v2->fX) * (v3->fY - v1->fY) - (v1->fY - v2->fY) * (v3->fX - v1->fX);
-}
-
-
-GLint iCorner, iVertex, iVertexTest, iEdge, iTriangle, iFlagIndex, iEdgeFlags;
-GLfloat fOffset;
-Voxel* afCubeValue[8];
-GLvector asEdgeVertex[12];
-GLvector asEdgeNorm[12];
-
-
-GLfloat triangleNet[dataCount*3];
-GLfloat triangleNetNormals[dataCount*3];
-int triangleNetIndex;
-/**
- * Marching cubes na jedný kostce (8 voxelù)
- *
- * použit základ kódu z http://www.siafoo.net/snippet/100
- *
- */
-GLvoid vMarchCube(const int fX, const  int fY, const int fZ, const GLfloat fScale = 1.0f)
-{
-        /*
-		GLint iCorner, iVertex, iVertexTest, iEdge, iTriangle, iFlagIndex, iEdgeFlags;
-        GLfloat fOffset;
-        Voxel* afCubeValue[8];
-        GLvector asEdgeVertex[12];
-        GLvector asEdgeNorm[12];
-		*/
-        
-        //Make a local copy of the values at the cube's corners
-        for(iVertex = 0; iVertex < 8; iVertex++)
-        {
-			if( fX + a2fVertexOffset[iVertex][0] < 0 || fX + a2fVertexOffset[iVertex][0] >= dataWidth ||
-				fY + a2fVertexOffset[iVertex][1] < 0 || fY + a2fVertexOffset[iVertex][1] >= dataHeight ||
-				fZ + a2fVertexOffset[iVertex][2] < 0 || fZ + a2fVertexOffset[iVertex][2] >= dataDepth) {
-					 afCubeValue[iVertex] = NULL;
-					 continue;
-			}
-			afCubeValue[iVertex] =  &data[DATA_INDEX(fX + a2fVertexOffset[iVertex][0],
-										 fY + a2fVertexOffset[iVertex][1],
-										 fZ + a2fVertexOffset[iVertex][2])];
-        }
-
-        //Find which vertices are inside of the surface and which are outside
-        iFlagIndex = 0;
-        for(iVertexTest = 0; iVertexTest < 8; iVertexTest++)
-        {
-			if(afCubeValue[iVertexTest] == NULL) {
-				continue;
-			}
-			if(afCubeValue[iVertexTest]->status == ICE) 
-				iFlagIndex |= 1 << iVertexTest;
-        }
-
-        //Find which edges are intersected by the surface
-        iEdgeFlags = aiCubeEdgeFlags[iFlagIndex];
-
-        //If the cube is entirely inside or outside of the surface, then there will be no intersections
-        if(iEdgeFlags == 0) 
-			return;
-        
-		
-        //Find the point of intersection of the surface with each edge
-        //Then find the normal to the surface at those points
-        for(iEdge = 0; iEdge < 12; iEdge++)
-        {
-            //if there is an intersection on this edge
-            if(iEdgeFlags & (1<<iEdge))
-            {
-				//TODO!!!
-				fOffset = 0.5f;
-
-				float* v = data[DATA_INDEX(fX,fY,fZ)].position;
-
-                asEdgeVertex[iEdge].fX = v[0] + (a2fVertexOffset[ a2iEdgeConnection[iEdge][0] ][0] + fOffset * a2fEdgeDirection[iEdge][0]) *fScale;
-                asEdgeVertex[iEdge].fY = v[1] + (a2fVertexOffset[ a2iEdgeConnection[iEdge][0] ][1] + fOffset * a2fEdgeDirection[iEdge][1]) *fScale;
-                asEdgeVertex[iEdge].fZ = v[2] + (a2fVertexOffset[ a2iEdgeConnection[iEdge][0] ][2] + fOffset * a2fEdgeDirection[iEdge][2]) *fScale;
-                //vGetNormal(asEdgeNorm[iEdge], asEdgeVertex[iEdge].fX, asEdgeVertex[iEdge].fY, asEdgeVertex[iEdge].fZ);
-            }
-        }
-
-		GLvector normal;
-        //Draw the triangles that were found.  There can be up to five per cube
-        for(iTriangle = 0; iTriangle < 5; iTriangle++)
-        {
-            if(a2iTriangleConnectionTable[iFlagIndex][3*iTriangle] < 0)
-                    break;
-			
-            for(iCorner = 0; iCorner < 3; iCorner++)
-            {
-                iVertex = a2iTriangleConnectionTable[iFlagIndex][3*iTriangle+iCorner];
-
-                //glNormal3f(normal.fX, normal.fY, normal.fZ);
-                glVertex3f(asEdgeVertex[iVertex].fX, asEdgeVertex[iVertex].fY, asEdgeVertex[iVertex].fZ); //TODO
-				
-				/*triangleNet[triangleNetIndex] = asEdgeVertex[iVertex].fX;
-				triangleNetNormals[triangleNetIndex++] = normal.fX;
-				triangleNet[triangleNetIndex] = asEdgeVertex[iVertex].fY;
-				triangleNetNormals[triangleNetIndex++] = normal.fY;
-				triangleNet[triangleNetIndex] = asEdgeVertex[iVertex].fZ;
-				triangleNetNormals[triangleNetIndex++] = normal.fZ;*/
-
-            }
-        }
-}
-
-/**
- * Marching cubes pro celou møížku
- *
- */
-GLvoid vMarchingCubes()
-{
-	triangleNetIndex = 0;
-	int iX, iY, iZ;
-    for(iX = 0; iX < dataWidth; iX++)
-		for(iY = 0; iY < dataHeight; iY++)
-			for(iZ = 0; iZ < dataDepth; iZ++) {
-				vMarchCube(iX, iY, iZ);
-			}
-}
-
 
 //-----------------------------------------------------------------------------
 // Name: cbDisplay()
@@ -233,11 +93,9 @@ void cbDisplay()
 		//glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, g_pPlaneMesh);
 		glEnableVertexAttribArray(1);
 		init = false;
-		//initData();
 		srand ( time(NULL) );
 
 		simulation->init();
-		
 	}
 
 	if(g_melt)
@@ -298,10 +156,9 @@ void cbInitGL()
     initGUI();
 
     // Set OpenGL state variables
-    glClearColor(0.15f, 0.15f, 0.15f, 0); //glClearColor(0.4f, 0.4f, 0.7f, 0);
+    glClearColor(0.15f, 0.15f, 0.15f, 0);
     glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
-    //glEnable(GL_LIGHTING);
-    //glEnable(GL_LIGHT0);
+
     glEnable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);
 
@@ -436,9 +293,6 @@ void cbKeyboardChanged(int key, int action)
     case 't' : g_SceneTraZ        += 0.5f;                               break;
     case 'T' : g_SceneTraZ        -= (g_SceneTraZ > 0.5) ? 0.5f : 0.0f;  break;
     case 'r' : g_SceneRotEnabled   = !g_SceneRotEnabled;                 break;
-    case 'v' : g_UseVertexShader   = !g_UseVertexShader;                 break;
-    case 'g' : g_UseGeometryShader = !g_UseGeometryShader;               break;
-    case 'f' : g_UseFragmentShader = !g_UseFragmentShader;               break;
     case 'w' : g_WireMode          = !g_WireMode;                        break;
     case 's' : g_UseShaders = !g_UseShaders;                             break;
     case 'b' : 
@@ -451,14 +305,9 @@ void cbKeyboardChanged(int key, int action)
     printf("[r]   g_SceneRotEnabled   = %s\n", g_SceneRotEnabled ? "true" : "false");
     printf("[w]   g_WireMode          = %s\n", g_WireMode ? "true" : "false");
     printf("[s]   g_UseShaders        = %s\n", g_UseShaders ? "true" : "false");
-    printf("[v]   g_UseVertexShader   = %s\n", g_UseVertexShader ? "true" : "false");
-    printf("[g]   g_UseGeometryShader = %s\n", g_UseGeometryShader ? "true" : "false");
-    printf("[f]   g_UseFragmentShader = %s\n", g_UseFragmentShader ? "true" : "false");
     printf("[b]   re-compile shaders\n\n");
 }
 
-
-#ifdef USE_ANTTWEAKBAR
 //-----------------------------------------------------------------------------
 // Name: cbSetShaderStatus()
 // Desc: 
@@ -483,38 +332,6 @@ void TW_CALL cbGetShaderStatus(void *value, void *clientData)
 {
     *(bool*)(value) = g_UseShaders;
 } 
-#else
-bool g_MouseRotationEnabled = false;
-
-//-----------------------------------------------------------------------------
-// Name: cbMouseButtonChanged()
-// Desc: internal
-//-----------------------------------------------------------------------------
-void GLFWCALL cbMouseButtonChanged(int button, int action)
-{
-    g_MouseRotationEnabled = ((button == GLFW_MOUSE_BUTTON_LEFT) && (action == GLFW_PRESS));
-}
-
-
-//-----------------------------------------------------------------------------
-// Name: cbMousePositionChanged()
-// Desc: 
-//-----------------------------------------------------------------------------
-void cbMousePositionChanged(int x, int y)
-{
-    static int s_LastMousePoxX = x;
-    static int s_LastMousePoxY = y;
-
-    if (g_MouseRotationEnabled)
-    {
-        g_SceneRot[1] +=  0.9f*(x - s_LastMousePoxX);
-        g_SceneRot[2] +=  0.9f*(y - s_LastMousePoxY);
-        s_LastMousePoxX = x;
-        s_LastMousePoxY = y;
-    }
-}
-#endif
-
 
 //-----------------------------------------------------------------------------
 // Name: main()
@@ -523,18 +340,12 @@ void cbMousePositionChanged(int x, int y)
 int main(int argc, char* argv[]) 
 {
     return common_main(g_WindowWidth, g_WindowHeight,
-                       "[GPU] Ice melting",
+                       "[39GPU] Ice melting",
                        cbInitGL,              // init GL callback function
                        cbDisplay,             // display callback function
                        cbWindowSizeChanged,   // window resize callback function
                        cbKeyboardChanged,     // keyboard callback function
-#ifdef USE_ANTTWEAKBAR
                        NULL,                  // mouse button callback function
                        NULL                   // mouse motion callback function
-#else
-                       cbMouseButtonChanged,  // mouse button callback function
-                       cbMousePositionChanged // mouse motion callback function
-#endif
                        );
 }
-
