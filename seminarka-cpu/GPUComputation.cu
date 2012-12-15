@@ -42,14 +42,17 @@ __device__ unsigned long getThreadId() {
 			threadIdx.x + threadIdx.y*blockDim.x + threadIdx.z*blockDim.x*blockDim.y;
 }
 
-__device__ float ambientHeat(Voxel *voxel) {
+__device__ float ambientHeat(Voxel * data, int ivoxel) {
+	Voxel * voxel = &data[ivoxel];
 	return TIME_STEP * (
 		(THERMAL_CONDUCTIVITY * (AIR_TEMPERATURE - voxel->temperature))
 		/ (SPECIFIC_HEAT_CAP_ICE * voxel->mass)
 		);
 }
 
-__device__ float transferHeat(Voxel * voxel, Voxel* v) {
+__device__ float transferHeat(Voxel* data, int ivoxel, int iv) {
+	Voxel * voxel = &data[ivoxel];
+	Voxel * v = &data[iv];
 	if(voxel->status == ICE)
 		return TIME_STEP * (THERMAL_DIFFUSION_ICE * v->mass * (v->temperature - voxel->temperature) / DENSITY_ICE);
 	else if(voxel->status == WATER)
@@ -59,18 +62,20 @@ __device__ float transferHeat(Voxel * voxel, Voxel* v) {
 }
 
 
-__device__ void updateVoxel(bool condition, Voxel* data, int v1, int v2) {
-	Voxel * voxel = &data[v1];
-	//Voxel * v = &data[v2];
-
-	if(condition ) {//&& v->status != ICE) {
-		//float change = transferHeat(voxel, v);
-		float change = 1.f;
-		voxel->temperature -= change;
-		//v->temperature += change;
+__device__ void updateVoxel(bool condition, Voxel* data, int ivoxel, int iv) {
+	Voxel * voxel = &data[ivoxel];
+	Voxel * v = &data[iv];
+	if(condition) {
+		if(v->status != ICE)
+			voxel->temperature += ambientHeat(data, ivoxel);
+		else {
+			float change = transferHeat(data, ivoxel, iv);
+			v->temperature += change;
+			voxel->temperature -= change;
+		}
 	}
 	else {
-		voxel->temperature += 1.f;//ambientHeat(voxel);
+		voxel->temperature += ambientHeat(data, ivoxel);
 	}
 }
 
@@ -88,16 +93,17 @@ __global__ void updateParticlesKernel(Voxel * data) {
 	if(voxel->status != ICE) {
 		return; //?
 	}
+
 	//do sdileny pameti (konstatntni?)
 	const int neighbours[6][3] = {
 		{1, 0, 0}, {0, 1, 0}, {0, 0, 1}, 
 		{-1, 0, 0}, {0, -1, 0}, {0, 0, -1}
 	};
 
-	int k = threadId/DATA_WIDTH_TOTAL/DATA_HEIGHT_TOTAL;
-	int j = ((threadId - k*DATA_WIDTH_TOTAL*DATA_HEIGHT_TOTAL)/DATA_WIDTH_TOTAL) % DATA_HEIGHT_TOTAL;
-	int i = threadId - j*DATA_WIDTH_TOTAL - k*DATA_WIDTH_TOTAL*DATA_HEIGHT_TOTAL;
-	
+	int k = threadId / (DATA_WIDTH_TOTAL*DATA_HEIGHT_TOTAL);
+	int j = (threadId % (DATA_WIDTH_TOTAL*DATA_HEIGHT_TOTAL)) / DATA_WIDTH_TOTAL;
+	int i = (threadId % (DATA_WIDTH_TOTAL*DATA_HEIGHT_TOTAL)) % DATA_WIDTH_TOTAL;
+
 	//okolni castice zjistim podle indexu 
 	updateVoxel(i+neighbours[0][0] < DATA_WIDTH_TOTAL, data, threadId, DATA_INDEX(i+neighbours[0][0],j,k));
 	updateVoxel(j+neighbours[1][1] < DATA_HEIGHT_TOTAL, data, threadId, DATA_INDEX(i,j+neighbours[1][1],k));
