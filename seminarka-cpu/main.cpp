@@ -42,7 +42,7 @@ GLfloat  g_SceneTraZ			= 120.0f; //30 pro 16  // Scene translation along z-axis
 const int dataWidth				= DATA_WIDTH + AIR_VOXELS;
 const int dataHeight			= DATA_HEIGHT + AIR_VOXELS;
 const int dataDepth				= DATA_DEPTH + AIR_VOXELS;
-const int dataCount				= dataWidth*dataHeight*dataDepth;
+const int dataCount				= DATA_SIZE;
 int realDataCount				= dataCount;
 
 /************************************************
@@ -94,6 +94,9 @@ void cbDisplay()
 		glEnableVertexAttribArray(1);
 		init = false;
 		srand ( time(NULL) );
+		//GPUSimulation * gs = new GPUSimulation(dataWidth, dataHeight, dataDepth);
+		//gs->init();
+		//simulation->setData(gs->getData());
 
 		simulation->init();
 	}
@@ -150,7 +153,10 @@ void cbDisplay()
 void cbInitGL()
 {
 	//init data
-	simulation = new CPUSimulation(dataWidth, dataHeight, dataDepth);
+	if(COMPUTE_ON_GPU)
+		simulation = new GPUSimulation(dataWidth, dataHeight, dataDepth);
+	else
+		simulation = new CPUSimulation(dataWidth, dataHeight, dataDepth);
 
     // Init app GUI
     initGUI();

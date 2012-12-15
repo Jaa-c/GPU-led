@@ -14,11 +14,9 @@ public:
 	virtual void init();
 	virtual void march();
 
-private:
-	void updateVoxel(bool condition, Voxel* voxel, Voxel* v);
-	float transferHeat(Voxel * voxel, Voxel* v);
-	float ambientHeat(Voxel *voxel);
+	virtual void setData(Voxel * data);
 
+private:
 	int dataWidth, dataHeight, dataDepth;
 	int dataCount;
 	CPUMarchingCubes* cpumc;

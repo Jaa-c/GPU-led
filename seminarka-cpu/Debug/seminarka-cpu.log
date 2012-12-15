@@ -1,66 +1,43 @@
-﻿Build started 14.12.2012 16:59:57.
+﻿Build started 15.12.2012 3:43:49.
      1>Project "d:\FEL\GPU\seminarka\seminarka-cpu\seminarka-cpu\seminarka-cpu.vcxproj" on node 2 (build target(s)).
      1>InitializeBuildStatus:
          Creating "Debug\gpu-seminarka.unsuccessfulbuild" because "AlwaysCreate" was specified.
        AddCudaCompileDeps:
-       Skipping target "AddCudaCompileDeps" because all output files are up-to-date with respect to the input files.
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\cl.exe /E /nologo /showIncludes /TP /D__CUDACC__ /D_MBCS /I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\lib\Win32/" /I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\include" /I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\bin" /I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\include" /I. /FIcuda_runtime.h /c d:\FEL\GPU\seminarka\seminarka-cpu\seminarka-cpu\GPUComputation.cu 
        AddCudaCompilePropsDeps:
-         Found "CudaToolkitCustomDir".
-         Found "AdditionalDeps".
-         Found "CompileOut".
-         Found "Include".
-         Found "UseHostInclude".
-         Found "Keep".
-         Found "KeepDir".
-         Found "GenerateRelocatableDeviceCode".
-         Found "NvccCompilation".
-         Found "NvccPath".
-         Found "RequiredIncludes".
-         Found "TargetMachinePlatform".
-         Found "CInterleavedPTX".
-         Found "CodeGeneration".
-         Found "GPUDebugInfo".
-         Found "GenerateLineInfo".
-         Found "MaxRegCount".
-         Found "PtxAsOptionV".
-         Found "AdditionalCompilerOptions".
-         Found "Defines".
-         Found "UseHostDefines".
-         Found "Emulation".
-         Found "HostDebugInfo".
-         Found "FastMath".
-         Found "Optimization".
-         Found "Runtime".
-         Found "RuntimeChecks".
-         Found "TypeInfo".
-         Found "Warning".
-         Found "AdditionalOptions".
-         Found "CommandLineTemplate".
-         Found "PerformDeviceLink".
-         Found "LinkOut".
-         Found "AdditionalLibraryDirectories".
-         Found "UseHostLibraryDirectories".
-         Found "AdditionalDependencies".
-         Found "UseHostLibraryDependencies".
-         Found "GPUDebugInfo".
-         Found "Optimization".
-         Found "CodeGeneration".
-         Found "TargetMachinePlatform".
-         Found "Warning".
-         Found "RuntimeChecks".
-         Found "Runtime".
-         Found "TypeInfo".
-         Found "AdditionalCompilerOptions".
-         Found "Inputs".
-         Found "AdditionalOptions".
-         Found "CommandLineTemplate".
+       Skipping target "AddCudaCompilePropsDeps" because all output files are up-to-date with respect to the input files.
        CudaBuild:
-       Skipping target "CudaBuild" because all output files are up-to-date with respect to the input files.
+         Compiling CUDA source file GPUComputation.cu...
+         cmd.exe /C "C:\Users\Jaa\AppData\Local\Temp\edf42f96d092450b88330bf0a1bf2a2a.cmd"
+         "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\bin\nvcc.exe" -gencode=arch=compute_10,code=\"sm_10,compute_10\" --use-local-env --cl-version 2010 -ccbin "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin"  -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\lib\Win32/" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\include" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\include"  -G   --keep-dir "Debug" -maxrregcount=0  --machine 32 --compile  -g   -D_MBCS -Xcompiler "/EHsc /W3 /nologo /Od /Zi /RTC1 /MDd  " -o "Debug\GPUComputation.cu.obj" "d:\FEL\GPU\seminarka\seminarka-cpu\seminarka-cpu\GPUComputation.cu"
+         
+         d:\FEL\GPU\seminarka\seminarka-cpu\seminarka-cpu>"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\bin\nvcc.exe" -gencode=arch=compute_10,code=\"sm_10,compute_10\" --use-local-env --cl-version 2010 -ccbin "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin"  -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\lib\Win32/" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\include" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\include"  -G   --keep-dir "Debug" -maxrregcount=0  --machine 32 --compile  -g   -D_MBCS -Xcompiler "/EHsc /W3 /nologo /Od /Zi /RTC1 /MDd  " -o "Debug\GPUComputation.cu.obj" "d:\FEL\GPU\seminarka\seminarka-cpu\seminarka-cpu\GPUComputation.cu" 
+         GPUComputation.cu
+         tmpxft_0000b9a8_00000000-2_GPUComputation.cudafe1.gpu
+         tmpxft_0000b9a8_00000000-7_GPUComputation.cudafe2.gpu
+         GPUComputation.cu
+         tmpxft_0000b9a8_00000000-2_GPUComputation.cudafe1.cpp
+         tmpxft_0000b9a8_00000000-12_GPUComputation.ii
+         Deleting file "tmpxft_0000b9a8_00000000-8_GPUComputation.cpp3.o".
        ClCompile:
-         All outputs are up-to-date.
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\lib\Win32/" /I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\include" /ZI /nologo /W3 /WX- /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt CPUMarchingCubes.cpp CPUSimulation.cpp GPUSimulation.cpp Voxel.cpp main.cpp
+         CPUSimulation.cpp
+         Generating Code...
+         Compiling...
+         main.cpp
+     1>d:\fel\gpu\seminarka\seminarka-cpu\common\tools.h(21): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(234) : see declaration of 'fopen'
+     1>d:\fel\gpu\seminarka\seminarka-cpu\common\tools.h(427): warning C4244: 'argument' : conversion from 'long' to 'float', possible loss of data
+     1>d:\fel\gpu\seminarka\seminarka-cpu\common\tools.h(458): warning C4244: 'argument' : conversion from 'long' to 'float', possible loss of data
+     1>d:\fel\gpu\seminarka\seminarka-cpu\common\tools.h(664): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(234) : see declaration of 'fopen'
+         Voxel.cpp
+         GPUSimulation.cpp
+         CPUMarchingCubes.cpp
+     1>d:\fel\gpu\seminarka\seminarka-cpu\seminarka-cpu\cpumarchingcubes.cpp(40): warning C4101: 'asEdgeNorm' : unreferenced local variable
+         Generating Code...
        Link:
-         All outputs are up-to-date.
-         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"D:\FEL\GPU\seminarka\seminarka-cpu\Debug\gpu-seminarka.exe" /NOLOGO /LIBPATH:../common/GLFW/msvc10 /LIBPATH:../common/AntTweakBar /LIBPATH:"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\lib\Win32/cudart.lib" /LIBPATH:"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\lib\Win32/curand.lib" /LIBPATH:../common/GLEW /LIBPATH:"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\lib\Win32" opengl32.lib glu32.lib glfw.lib glew32.lib glut32.lib cudart.lib curand.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Debug\gpu-seminarka.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"D:\FEL\GPU\seminarka\seminarka-cpu\Debug\gpu-seminarka.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:\FEL\GPU\seminarka\seminarka-cpu\Debug\gpu-seminarka.lib" /MACHINE:X86 Debug\GPUComputation.cu.obj
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"D:\FEL\GPU\seminarka\seminarka-cpu\Debug\gpu-seminarka.exe" /NOLOGO /LIBPATH:../common/GLFW/msvc10 /LIBPATH:../common/AntTweakBar /LIBPATH:../common/GLEW /LIBPATH:"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\lib\Win32" opengl32.lib glu32.lib glfw.lib glew32.lib glut32.lib cudart.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Debug\gpu-seminarka.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"D:\FEL\GPU\seminarka\seminarka-cpu\Debug\gpu-seminarka.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:\FEL\GPU\seminarka\seminarka-cpu\Debug\gpu-seminarka.lib" /MACHINE:X86 Debug\GPUComputation.cu.obj
          Debug\CPUMarchingCubes.obj
          Debug\CPUSimulation.obj
          Debug\GPUSimulation.obj
@@ -78,4 +55,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:00.31
+Time Elapsed 00:00:07.60

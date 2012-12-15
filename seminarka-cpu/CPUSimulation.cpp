@@ -19,6 +19,11 @@ Voxel* CPUSimulation::getData() {
 	return this->data;
 }
 
+//debug
+void CPUSimulation::setData(Voxel * data) {
+	this->data = data;
+}
+
 void CPUSimulation::march() {
 	this->cpumc->vMarchingCubes(this->data, this->dataCount);
 }
@@ -52,9 +57,10 @@ void CPUSimulation::updateParticles() {
 	}
 
 }
+
 void CPUSimulation::init() {
-	
-	float ofsi = dataWidth/2.0f - 0.5f; //TODO right size
+
+	float ofsi = dataWidth/2.0f - 0.5f;
 	float ofsj = dataHeight/2.0f - 0.5f; 
 	float ofsk = dataDepth/2.0f - 0.5f; 
 

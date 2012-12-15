@@ -13,6 +13,8 @@ public:
 	virtual void updateParticles();
 	virtual void init();
 	virtual void march();
+	
+	virtual void setData(Voxel * data);
 
 private:
 	void updateVoxel(bool condition, Voxel* voxel, Voxel* v);
