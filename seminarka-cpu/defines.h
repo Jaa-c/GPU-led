@@ -24,22 +24,21 @@
 #define TIME_STEP					0.003f
 
 #define DATA_WIDTH					64
-#define DATA_HEIGHT					64
-#define DATA_DEPTH					64
+#define DATA_HEIGHT					48
+#define DATA_DEPTH					32
 
 #define AIR_VOXELS					2
 
-#define DATA_WIDTH_TOTAL			(DATA_WIDTH+AIR_VOXELS)
-#define DATA_HEIGHT_TOTAL			(DATA_HEIGHT+AIR_VOXELS)
-#define DATA_DEPTH_TOTAL			(DATA_DEPTH+AIR_VOXELS)
+#define WIDTH						(DATA_WIDTH + AIR_VOXELS)
+#define HEIGHT						(DATA_HEIGHT + AIR_VOXELS)
+#define DEPTH						(DATA_DEPTH + AIR_VOXELS)
 
-
-#define DATA_SIZE					(DATA_WIDTH_TOTAL * DATA_HEIGHT_TOTAL * DATA_DEPTH_TOTAL)
+#define DATA_SIZE					(WIDTH * HEIGHT * DEPTH)
 
 #define WINDOW_WIDTH				800
 #define WINDOW_HEIGHT				600
 
 
-#define DATA_INDEX(i,j,k)			((i) + (j)*(DATA_WIDTH_TOTAL) + (k)*(DATA_WIDTH_TOTAL)*(DATA_HEIGHT_TOTAL))
+#define DATA_INDEX(i,j,k)			((i) + (j)*(WIDTH) + (k)*(WIDTH)*(HEIGHT))
 
 #endif

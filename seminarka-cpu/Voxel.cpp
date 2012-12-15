@@ -5,7 +5,6 @@ Voxel::Voxel(float x, float y, float z) : temperature(PARTICLE_INIT_TEMPERATURE)
 		position[0] = x;
 		position[1] = y;
 		position[2] = z;
-		mass += rand();
 	}
 
 Voxel::Voxel() : temperature(PARTICLE_INIT_TEMPERATURE), velocity(0.0f), status(ICE), mass(PARTICLE_MASS) {

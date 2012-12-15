@@ -5,7 +5,7 @@ GPUSimulation::GPUSimulation(int dataWidth, int dataHeight, int dataDepth) {
 	this->dataCount = dataWidth * dataHeight * dataDepth;
 	this->data = new Voxel[dataCount];
 
-	this->cpumc = new CPUMarchingCubes(dataWidth, dataHeight, dataDepth);
+	this->cpumc = new CPUMarchingCubes();
 
 	this->dataWidth = dataWidth;
 	this->dataHeight = dataHeight;
@@ -37,28 +37,18 @@ void GPUSimulation::updateParticles() {
 //data inicializuju na CPU, na GPU to jednoduše nejde :/
 void GPUSimulation::init() {
 
-	float ofsi = dataWidth/2.0f - 0.5f;
-	float ofsj = dataHeight/2.0f - 0.5f; 
-	float ofsk = dataDepth/2.0f - 0.5f; 
+	float ofsi = WIDTH/2.0f - 0.5f;
+	float ofsj = HEIGHT/2.0f - 0.5f; 
+	float ofsk = DEPTH/2.0f - 0.5f; 
 
-	int ii, ij, ik, index = 0;
-	ii = 0;
-	for(float i = -ofsi; i <= ofsi; i++) {
-		ij = 0;
-		for(float j = -ofsj; j <= ofsj; j++) {
-			ik = 0;
-			for(float k = -ofsk; k <= ofsk; k++) {
-
-				data[DATA_INDEX(ii,ij,ik)].setPosition(i, j, k);
-
-				if(ii <= 1 || ij <= 1 || ik <= 1)
-					data[DATA_INDEX(ii,ij,ik)].status = AIR; //nastavim maly okoli na vzduch
-
-				ik++;
+	for(int i = 0; i < WIDTH; i++) {
+		for(int j = 0; j < HEIGHT; j++) {
+			for(int k = 0; k < DEPTH; k++) {
+				data[DATA_INDEX(i,j,k)].setPosition(i - ofsi, j - ofsj, k - ofsk);
+				if(i < AIR_VOXELS || j < AIR_VOXELS || k < AIR_VOXELS)
+					data[DATA_INDEX(i,j,k)].status = AIR; //nastavim maly okoli na vzduch
 			}
-			ij++;
 		}
-		ii++;
 	}
 
 	cudaInit(this->data);

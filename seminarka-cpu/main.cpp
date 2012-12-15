@@ -39,11 +39,7 @@ bool     g_drawPoints			= false;  // use geometry
 bool     g_melt					= false;  // to melt or not to melt?
 
 GLfloat  g_SceneTraZ			= 120.0f; //30 pro 16  // Scene translation along z-axis
-const int dataWidth				= DATA_WIDTH + AIR_VOXELS;
-const int dataHeight			= DATA_HEIGHT + AIR_VOXELS;
-const int dataDepth				= DATA_DEPTH + AIR_VOXELS;
-const int dataCount				= DATA_SIZE;
-int realDataCount				= dataCount;
+int realDataCount				= DATA_SIZE;
 
 /************************************************
 *				Deprecated			    *
@@ -94,7 +90,7 @@ void cbDisplay()
 		glEnableVertexAttribArray(1);
 		init = false;
 		srand ( time(NULL) );
-		//GPUSimulation * gs = new GPUSimulation(dataWidth, dataHeight, dataDepth);
+		//GPUSimulation * gs = new GPUSimulation(WIDTH, HEIGHT, DEPTH);
 		//gs->init();
 		//simulation->setData(gs->getData());
 
@@ -154,9 +150,9 @@ void cbInitGL()
 {
 	//init data
 	if(COMPUTE_ON_GPU)
-		simulation = new GPUSimulation(dataWidth, dataHeight, dataDepth);
+		simulation = new GPUSimulation(WIDTH, HEIGHT, DEPTH);
 	else
-		simulation = new CPUSimulation(dataWidth, dataHeight, dataDepth);
+		simulation = new CPUSimulation(WIDTH, HEIGHT, DEPTH);
 
     // Init app GUI
     initGUI();

@@ -1,11 +1,7 @@
 #include <iostream>
-
 #include "CPUMarchingCubes.h"
 
-CPUMarchingCubes::CPUMarchingCubes(const int dataWidth, const int dataHeight, const int dataDepth) {
-	this->dataWidth = dataWidth;
-	this->dataHeight = dataHeight;
-	this->dataDepth = dataDepth;
+CPUMarchingCubes::CPUMarchingCubes() {
 }
 
 /**
@@ -17,13 +13,12 @@ void CPUMarchingCubes::vMarchingCubes(Voxel* data, const int dataCount)
 	this->data = data;
 
 	int iX, iY, iZ;
-    for(iX = 0; iX < dataWidth; iX++)
-		for(iY = 0; iY < dataHeight; iY++)
-			for(iZ = 0; iZ < dataDepth; iZ++) {
+    for(iX = 0; iX < WIDTH; iX++)
+		for(iY = 0; iY < HEIGHT; iY++)
+			for(iZ = 0; iZ < DEPTH; iZ++) {
 				vMarchCube(iX, iY, iZ, dataCount);
 			}
 }
-
 
 
 /**
@@ -32,22 +27,18 @@ void CPUMarchingCubes::vMarchingCubes(Voxel* data, const int dataCount)
  * použit základ kódu z http://www.siafoo.net/snippet/100
  *
  */
- void CPUMarchingCubes::vMarchCube(const int fX, const  int fY, const int fZ, const int dataCount, const GLfloat fScale) {
+ void CPUMarchingCubes::vMarchCube(const int fX, const  int fY, const int fZ, const GLfloat fScale) {
         GLint iCorner, iVertex, iVertexTest, iEdge, iTriangle, iFlagIndex, iEdgeFlags;
 		GLfloat fOffset;
 		Voxel* afCubeValue[8];
 		GLvector asEdgeVertex[12];
-		GLvector asEdgeNorm[12];
-
-		//GLfloat triangleNet[dataCount*3];
-		//int triangleNetIndex;
-        
+		        
         //Make a local copy of the values at the cube's corners
         for(iVertex = 0; iVertex < 8; iVertex++)
         {
-			if( fX + a2fVertexOffset[iVertex][0] < 0 || fX + a2fVertexOffset[iVertex][0] >= dataWidth ||
-				fY + a2fVertexOffset[iVertex][1] < 0 || fY + a2fVertexOffset[iVertex][1] >= dataHeight ||
-				fZ + a2fVertexOffset[iVertex][2] < 0 || fZ + a2fVertexOffset[iVertex][2] >= dataDepth) {
+			if( fX + a2fVertexOffset[iVertex][0] < 0 || fX + a2fVertexOffset[iVertex][0] >= WIDTH ||
+				fY + a2fVertexOffset[iVertex][1] < 0 || fY + a2fVertexOffset[iVertex][1] >= HEIGHT ||
+				fZ + a2fVertexOffset[iVertex][2] < 0 || fZ + a2fVertexOffset[iVertex][2] >= DEPTH) {
 					 afCubeValue[iVertex] = NULL;
 					 continue;
 			}
@@ -90,7 +81,6 @@ void CPUMarchingCubes::vMarchingCubes(Voxel* data, const int dataCount)
                 asEdgeVertex[iEdge].fX = v[0] + (a2fVertexOffset[ a2iEdgeConnection[iEdge][0] ][0] + fOffset * a2fEdgeDirection[iEdge][0]) *fScale;
                 asEdgeVertex[iEdge].fY = v[1] + (a2fVertexOffset[ a2iEdgeConnection[iEdge][0] ][1] + fOffset * a2fEdgeDirection[iEdge][1]) *fScale;
                 asEdgeVertex[iEdge].fZ = v[2] + (a2fVertexOffset[ a2iEdgeConnection[iEdge][0] ][2] + fOffset * a2fEdgeDirection[iEdge][2]) *fScale;
-                //vGetNormal(asEdgeNorm[iEdge], asEdgeVertex[iEdge].fX, asEdgeVertex[iEdge].fY, asEdgeVertex[iEdge].fZ);
             }
         }
 
@@ -105,12 +95,8 @@ void CPUMarchingCubes::vMarchingCubes(Voxel* data, const int dataCount)
             {
                 iVertex = a2iTriangleConnectionTable[iFlagIndex][3*iTriangle+iCorner];
 
-                //glNormal3f(normal.fX, normal.fY, normal.fZ);
                 glVertex3f(asEdgeVertex[iVertex].fX, asEdgeVertex[iVertex].fY, asEdgeVertex[iVertex].fZ); //TODO
 				
-				//triangleNet[triangleNetIndex] = asEdgeVertex[iVertex].fX;
-				//triangleNet[triangleNetIndex] = asEdgeVertex[iVertex].fY;
-				//triangleNet[triangleNetIndex] = asEdgeVertex[iVertex].fZ;
 
             }
         }

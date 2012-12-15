@@ -1,33 +1,4 @@
-
-#include <cuda_runtime.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <iostream>
-#include "Voxel.h"
-
-inline void HandleError( cudaError_t error, const char *file, int line )
-{
-	if (error != cudaSuccess) {
-		printf( "%s in %s at line %d\n", cudaGetErrorString( error ), file, line );
-		//exit( EXIT_FAILURE );
-	}
-}
-#define CHECK_ERR( error ) HandleError( error, __FILE__, __LINE__ )
-
-inline void __cudaCheckError( const char *file, const int line ) {
-	cudaError err = cudaGetLastError();
-	if ( cudaSuccess != err ) {
-		fprintf( stderr, "cudaCheckError() failed at %s:%i : %s\n",
-		file, line, cudaGetErrorString( err ) );
-	}
-
-	err = cudaDeviceSynchronize();
-	if( cudaSuccess != err ) {
-		fprintf( stderr, "cudaCheckError() with sync failed at %s:%i : %s\n",
-		file, line, cudaGetErrorString( err ) );
-	}
-}
-#define CHECK_LAST_ERR() __cudaCheckError( __FILE__, __LINE__ )
+#include "cudaCommon.cuh"
 
 /************************************************
 *				Device buffers			    *
@@ -80,38 +51,29 @@ __device__ void updateVoxel(bool condition, Voxel* data, int ivoxel, int iv) {
 }
 
 __global__ void updateParticlesKernel(Voxel * data) {
-	const unsigned long block = blockIdx.x + blockIdx.y * gridDim.x + blockIdx.z * gridDim.x * gridDim.y;
 	
-	const unsigned long threadId = block * blockDim.x * blockDim.y * blockDim.z +
-			threadIdx.x + threadIdx.y*blockDim.x + threadIdx.z*blockDim.x*blockDim.y;
+	const unsigned long threadId = getThreadId();
 
-	if(threadId >= DATA_SIZE)//=?
+	if(threadId >= DATA_SIZE)
 		return;
 
 	Voxel * voxel = &data[threadId];
-
 	if(voxel->status != ICE) {
 		return; //?
 	}
 
-	//do sdileny pameti (konstatntni?)
-	const int neighbours[6][3] = {
-		{1, 0, 0}, {0, 1, 0}, {0, 0, 1}, 
-		{-1, 0, 0}, {0, -1, 0}, {0, 0, -1}
-	};
-
-	int k = threadId / (DATA_WIDTH_TOTAL*DATA_HEIGHT_TOTAL);
-	int j = (threadId % (DATA_WIDTH_TOTAL*DATA_HEIGHT_TOTAL)) / DATA_WIDTH_TOTAL;
-	int i = (threadId % (DATA_WIDTH_TOTAL*DATA_HEIGHT_TOTAL)) % DATA_WIDTH_TOTAL;
+	int k = threadId / (WIDTH*HEIGHT);
+	int j = (threadId - (k*WIDTH*HEIGHT))/WIDTH;
+	int i = threadId - j*WIDTH - k*WIDTH*HEIGHT;
 
 	//okolni castice zjistim podle indexu 
-	updateVoxel(i+neighbours[0][0] < DATA_WIDTH_TOTAL, data, threadId, DATA_INDEX(i+neighbours[0][0],j,k));
-	updateVoxel(j+neighbours[1][1] < DATA_HEIGHT_TOTAL, data, threadId, DATA_INDEX(i,j+neighbours[1][1],k));
-	updateVoxel(k+neighbours[2][2] < DATA_DEPTH_TOTAL, data, threadId, DATA_INDEX(i,j,k+neighbours[2][2]));
+	updateVoxel(i+1 < WIDTH, data, threadId, DATA_INDEX(i+1,j,k));
+	updateVoxel(j+1 < HEIGHT, data, threadId, DATA_INDEX(i,j+1,k));
+	updateVoxel(k+1 < DEPTH, data, threadId, DATA_INDEX(i,j,k+1));
 				
-	updateVoxel(i+neighbours[3][0] >= 0, data, threadId, DATA_INDEX(i+neighbours[3][0],j,k));
-	updateVoxel(j+neighbours[4][1] >= 0, data, threadId, DATA_INDEX(i,j+neighbours[4][1],k));
-	updateVoxel(k+neighbours[5][2] >= 0, data, threadId, DATA_INDEX(i,j,k+neighbours[5][2]));
+	updateVoxel(i-1 >= 0, data, threadId, DATA_INDEX(i-1,j,k));
+	updateVoxel(j-1 >= 0, data, threadId, DATA_INDEX(i,j-1,k));
+	updateVoxel(k-1 >= 0, data, threadId, DATA_INDEX(i,j,k-1));
 	
 	if(voxel->temperature > ZERO_DEG) {
 		voxel->status = WATER;
@@ -119,24 +81,27 @@ __global__ void updateParticlesKernel(Voxel * data) {
 }
 
 
-
-//deprecated... ono je to vygeneruje ve spanym poradi... (logicky)
 __global__ void initDataKernel(Voxel * data) {
 	const unsigned long threadId = getThreadId();
 
 	if(threadId > DATA_SIZE)
 		return;
 
-	int k = threadId/DATA_WIDTH_TOTAL/DATA_HEIGHT_TOTAL;
-	int j = ((threadId - k*DATA_WIDTH_TOTAL*DATA_HEIGHT_TOTAL)/DATA_WIDTH_TOTAL) % DATA_HEIGHT_TOTAL;
-	int i = threadId - j*DATA_WIDTH_TOTAL - k*DATA_WIDTH_TOTAL*DATA_HEIGHT_TOTAL;
+	int k = threadId / (WIDTH*HEIGHT);
+	int j = (threadId - (k*WIDTH*HEIGHT))/WIDTH;
+	int i = threadId - j*WIDTH - k*WIDTH*HEIGHT;
+
+	//shared memory
+	float ofsi = 0;//WIDTH/2.0f - 0.5f;
+	float ofsj = 0;//HEIGHT/2.0f - 0.5f;
+	float ofsk = 0;//DEPTH/2.0f - 0.5f;
 	
 	Voxel* v = &data[threadId];
-	v->position[0] = i;
-	v->position[1] = j;
-	v->position[2] = k;
-	
-	if(i <= 1 || j <= 1 || k <= 1)
+	v->position[0] = i - ofsi;
+	v->position[1] = j - ofsj;
+	v->position[2] = k - ofsk;
+		
+	if(i < AIR_VOXELS || j < AIR_VOXELS || k < AIR_VOXELS)
 		v->status = AIR; //nastavim maly okoli na vzduch
 
 }
@@ -169,7 +134,14 @@ void cudaInit(Voxel * data) {
 	CHECK_ERR(cudaMalloc((void**)&device_data, DATA_SIZE * sizeof(Voxel)));
 
 	//copy data from host to device
-	CHECK_ERR(cudaMemcpy(device_data, host_data, DATA_SIZE *  sizeof(Voxel), cudaMemcpyHostToDevice));
+	CHECK_ERR(cudaMemcpy(device_data, host_data, DATA_SIZE * sizeof(Voxel), cudaMemcpyHostToDevice));
+
+	/*dim3 gridRes(32,32,32);
+	dim3 blockRes(8,8,8);
+	initDataKernel<<< gridRes, blockRes >>>(device_data);
+	CHECK_LAST_ERR();
+	zkopirovani dat zpet na CPU
+	CHECK_ERR(cudaMemcpy(host_data, device_data, DATA_SIZE * sizeof(Voxel), cudaMemcpyDeviceToHost));*/
 	
 }
 
@@ -179,14 +151,17 @@ void cudaUpdateParticles() {
 	dim3 blockRes(8,8,8);
 	updateParticlesKernel<<< gridRes, blockRes >>>(device_data);
 	
-	CHECK_LAST_ERR();
+	//CHECK_LAST_ERR();
 
-	cudaThreadSynchronize();
+	//cudaThreadSynchronize();
 	//zkopirovani dat zpet na CPU
-	CHECK_ERR(cudaMemcpy(host_data, device_data, DATA_SIZE *  sizeof(Voxel), cudaMemcpyDeviceToHost));
+	CHECK_ERR(cudaMemcpy(host_data, device_data, DATA_SIZE * sizeof(Voxel), cudaMemcpyDeviceToHost));
 
 }
 
+Voxel * cudaGetHostDataPointer() {
+	return host_data;
+}
 
 void cudaFinalize() {
 	CHECK_ERR(cudaFree(&device_data));
