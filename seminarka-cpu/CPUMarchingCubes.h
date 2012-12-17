@@ -8,7 +8,7 @@ class CPUMarchingCubes {
 public:
 	CPUMarchingCubes();
 	~CPUMarchingCubes();
-	void vMarchingCubes(Voxel * data,  const int dataCount);
+	void vMarchingCubes(Voxel * data);
 
 private:
 	void vMarchCube(const int fX, const  int fY, const int fZ, const GLfloat fScale = 1.0f);

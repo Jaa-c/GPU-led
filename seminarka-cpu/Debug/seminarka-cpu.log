@@ -1,30 +1,31 @@
-﻿Build started 12/15/2012 11:52:58 PM.
-     1>Project "d:\FEL\GPU\seminarka\seminarka-cpu\seminarka-cpu\seminarka-cpu.vcxproj" on node 2 (build target(s)).
+﻿Build started 12/17/2012 1:48:41 AM.
+     1>Project "D:\FEL\GPU\seminarka\seminarka-cpu\seminarka-cpu\seminarka-cpu.vcxproj" on node 2 (build target(s)).
      1>InitializeBuildStatus:
          Creating "Debug\gpu-seminarka.unsuccessfulbuild" because "AlwaysCreate" was specified.
        AddCudaCompileDeps:
-       Skipping target "AddCudaCompileDeps" because all output files are up-to-date with respect to the input files.
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\cl.exe /E /nologo /showIncludes /TP /D__CUDACC__ /D_MBCS /I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\lib\Win32/" /I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\include" /I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\bin" /I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\include" /I. /FIcuda_runtime.h /c D:\FEL\GPU\seminarka\seminarka-cpu\seminarka-cpu\CudaUpdate.cu 
        AddCudaCompileDeps:
-         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\cl.exe /E /nologo /showIncludes /TP /D__CUDACC__ /D_MBCS /I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\lib\Win32/" /I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\include" /I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\bin" /I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\include" /I. /FIcuda_runtime.h /c d:\FEL\GPU\seminarka\seminarka-cpu\seminarka-cpu\CudaMarch.cu 
+       Skipping target "AddCudaCompileDeps" because all output files are up-to-date with respect to the input files.
        AddCudaCompilePropsDeps:
        Skipping target "AddCudaCompilePropsDeps" because all output files are up-to-date with respect to the input files.
        AddCudaCompilePropsDeps:
        Skipping target "AddCudaCompilePropsDeps" because all output files are up-to-date with respect to the input files.
+       CudaBuild:
+         Compiling CUDA source file CudaUpdate.cu...
+         cmd.exe /C "C:\Users\Jaa\AppData\Local\Temp\9a77e50792094366a0c2be1dfc0a72bb.cmd"
+         "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\bin\nvcc.exe" -gencode=arch=compute_10,code=\"sm_10,compute_10\" --use-local-env --cl-version 2010 -ccbin "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin"  -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\lib\Win32/" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\include" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\include"  -G   --keep-dir "Debug" -maxrregcount=0  --machine 32 --compile  -g   -D_MBCS -Xcompiler "/EHsc /W3 /nologo /Od /Zi /RTC1 /MDd  " -o "Debug\CudaUpdate.cu.obj" "D:\FEL\GPU\seminarka\seminarka-cpu\seminarka-cpu\CudaUpdate.cu"
+         
+         D:\FEL\GPU\seminarka\seminarka-cpu\seminarka-cpu>"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\bin\nvcc.exe" -gencode=arch=compute_10,code=\"sm_10,compute_10\" --use-local-env --cl-version 2010 -ccbin "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin"  -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\lib\Win32/" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\include" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\include"  -G   --keep-dir "Debug" -maxrregcount=0  --machine 32 --compile  -g   -D_MBCS -Xcompiler "/EHsc /W3 /nologo /Od /Zi /RTC1 /MDd  " -o "Debug\CudaUpdate.cu.obj" "D:\FEL\GPU\seminarka\seminarka-cpu\seminarka-cpu\CudaUpdate.cu" 
+         CudaUpdate.cu
+         tmpxft_00004910_00000000-2_CudaUpdate.cudafe1.gpu
+         tmpxft_00004910_00000000-7_CudaUpdate.cudafe2.gpu
+         CudaUpdate.cu
+         ptxas C:/Users/Jaa/AppData/Local/Temp/tmpxft_00004910_00000000-4_CudaUpdate.ptx, line 1767; : warning : Double is not supported. Demoting to float
+         tmpxft_00004910_00000000-2_CudaUpdate.cudafe1.cpp
+         tmpxft_00004910_00000000-12_CudaUpdate.ii
+         Deleting file "tmpxft_00004910_00000000-8_CudaUpdate.cpp3.o".
        CudaBuild:
        Skipping target "CudaBuild" because all output files are up-to-date with respect to the input files.
-       CudaBuild:
-         Compiling CUDA source file CudaMarch.cu...
-         cmd.exe /C "C:\Users\Jaa\AppData\Local\Temp\949607c69fbf48dfb05e5a773d6a306b.cmd"
-         "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\bin\nvcc.exe" -gencode=arch=compute_10,code=\"sm_10,compute_10\" --use-local-env --cl-version 2010 -ccbin "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin"  -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\lib\Win32/" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\include" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\include"  -G   --keep-dir "Debug" -maxrregcount=0  --machine 32 --compile  -g   -D_MBCS -Xcompiler "/EHsc /W3 /nologo /Od /Zi /RTC1 /MDd  " -o "Debug\CudaMarch.cu.obj" "d:\FEL\GPU\seminarka\seminarka-cpu\seminarka-cpu\CudaMarch.cu"
-         
-         d:\FEL\GPU\seminarka\seminarka-cpu\seminarka-cpu>"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\bin\nvcc.exe" -gencode=arch=compute_10,code=\"sm_10,compute_10\" --use-local-env --cl-version 2010 -ccbin "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin"  -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\lib\Win32/" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\include" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\include"  -G   --keep-dir "Debug" -maxrregcount=0  --machine 32 --compile  -g   -D_MBCS -Xcompiler "/EHsc /W3 /nologo /Od /Zi /RTC1 /MDd  " -o "Debug\CudaMarch.cu.obj" "d:\FEL\GPU\seminarka\seminarka-cpu\seminarka-cpu\CudaMarch.cu" 
-         CudaMarch.cu
-         tmpxft_0001240c_00000000-2_CudaMarch.cudafe1.gpu
-         tmpxft_0001240c_00000000-7_CudaMarch.cudafe2.gpu
-         CudaMarch.cu
-         tmpxft_0001240c_00000000-2_CudaMarch.cudafe1.cpp
-         tmpxft_0001240c_00000000-12_CudaMarch.ii
-         Deleting file "tmpxft_0001240c_00000000-8_CudaMarch.cpp3.o".
        ClCompile:
          All outputs are up-to-date.
        Link:
@@ -44,8 +45,8 @@
        FinalizeBuildStatus:
          Deleting file "Debug\gpu-seminarka.unsuccessfulbuild".
          Touching "Debug\gpu-seminarka.lastbuildstate".
-     1>Done Building Project "d:\FEL\GPU\seminarka\seminarka-cpu\seminarka-cpu\seminarka-cpu.vcxproj" (build target(s)).
+     1>Done Building Project "D:\FEL\GPU\seminarka\seminarka-cpu\seminarka-cpu\seminarka-cpu.vcxproj" (build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:04.94
+Time Elapsed 00:00:05.47

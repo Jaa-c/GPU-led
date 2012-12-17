@@ -8,7 +8,7 @@ CPUMarchingCubes::CPUMarchingCubes() {
  * Marching cubes pro celou møížku
  *
  */
-void CPUMarchingCubes::vMarchingCubes(Voxel* data, const int dataCount)
+void CPUMarchingCubes::vMarchingCubes(Voxel* data)
 {
 	this->data = data;
 
@@ -16,7 +16,7 @@ void CPUMarchingCubes::vMarchingCubes(Voxel* data, const int dataCount)
     for(iX = 0; iX < WIDTH; iX++)
 		for(iY = 0; iY < HEIGHT; iY++)
 			for(iZ = 0; iZ < DEPTH; iZ++) {
-				vMarchCube(iX, iY, iZ, dataCount);
+				vMarchCube(iX, iY, iZ);
 			}
 }
 

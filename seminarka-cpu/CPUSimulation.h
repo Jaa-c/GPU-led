@@ -7,10 +7,10 @@
 class CPUSimulation : public Simulation {
 
 public:
-	CPUSimulation(int dataWidth, int dataHeight, int dataDepth);
+	CPUSimulation();
 	~CPUSimulation();
 	virtual Voxel* getData();
-	virtual void updateParticles();
+	virtual int updateParticles();
 	virtual void init();
 	virtual void march();
 	
@@ -21,8 +21,6 @@ private:
 	float transferHeat(Voxel * voxel, Voxel* v);
 	float ambientHeat(Voxel *voxel);
 
-	int dataWidth, dataHeight, dataDepth;
-	int dataCount;
 	CPUMarchingCubes* cpumc;
 };
 

@@ -6,9 +6,9 @@
 class GPUMarchingCubes {
 
 public:
-	GPUMarchingCubes();
+	GPUMarchingCubes(Voxel * data);
 	~GPUMarchingCubes();
-	void vMarchingCubes(Voxel * data,  const int dataCount);
+	void vMarchingCubes(Voxel * data);
 
 private:
 	//Voxel* data;

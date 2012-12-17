@@ -1,10 +1,10 @@
 #include "GPUMarchingCubes.h"
 #include "GPUComputation.cuh"
 
-GPUMarchingCubes::GPUMarchingCubes() {
-	cudaMarchInit();
+GPUMarchingCubes::GPUMarchingCubes(Voxel * data) {
+	cudaMarchInit(data);
 }
 
-void GPUMarchingCubes::vMarchingCubes(Voxel * data,  const int dataCount) {
+void GPUMarchingCubes::vMarchingCubes(Voxel * data) {
 
 }

@@ -23,9 +23,9 @@
 
 #define TIME_STEP					0.003f
 
-#define DATA_WIDTH					64
-#define DATA_HEIGHT					48
-#define DATA_DEPTH					32
+#define DATA_WIDTH					80
+#define DATA_HEIGHT					50
+#define DATA_DEPTH					40
 
 #define AIR_VOXELS					2
 
@@ -38,6 +38,8 @@
 #define WINDOW_WIDTH				800
 #define WINDOW_HEIGHT				600
 
+#define CONSOLE_OUTPUT				true
+#define CONSOLE_OUTPUT_CYCLES		10
 
 #define DATA_INDEX(i,j,k)			((i) + (j)*(WIDTH) + (k)*(WIDTH)*(HEIGHT))
 

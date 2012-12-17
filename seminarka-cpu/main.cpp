@@ -6,6 +6,7 @@
 #define USE_ANTTWEAKBAR
 
 #include <iostream>
+#include <Windows.h>
 #include <time.h>
 #include "../common/common.h"
 #include "CPUSimulation.h"
@@ -60,9 +61,15 @@ void TW_CALL cbCompileShaderProgram(void *clientData);
 *				Simulation			    *
 ************************************************/
 Simulation* simulation;
+int cycles;
+int particles;
+long begin, end;
+long time_current, time_global;
 
 void initGUI();
 
+static bool init = true;
+static bool initMelt = true;
 //-----------------------------------------------------------------------------
 // Name: cbDisplay()
 // Desc: 
@@ -84,21 +91,44 @@ void cbDisplay()
     pgr2AddQuaternionRotationToTransformation(g_SceneRot);
     glRotatef(scene_rot, 0.0f, 1.0f, 0.0f);
 	
-	static bool init= true;
 	if(init) {
-		//glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, g_pPlaneMesh);
-		glEnableVertexAttribArray(1);
 		init = false;
+		glEnableVertexAttribArray(1);
 		srand ( time(NULL) );
-		//GPUSimulation * gs = new GPUSimulation(WIDTH, HEIGHT, DEPTH);
-		//gs->init();
-		//simulation->setData(gs->getData());
-
 		simulation->init();
 	}
 
-	if(g_melt)
-		simulation->updateParticles();
+	if(g_melt) {
+		if(initMelt) {
+			initMelt = false;
+			cycles = CONSOLE_OUTPUT_CYCLES;
+			time_global = 0;
+			time_current = 0;
+			
+		}
+
+		begin = timeGetTime();
+		particles = simulation->updateParticles();
+		end = timeGetTime();
+		time_current += end - begin;
+
+		if(particles == 0) {
+			g_melt = false;
+			cycles = CONSOLE_OUTPUT_CYCLES;
+		}
+
+		if(CONSOLE_OUTPUT) {
+			cycles++;
+			if(cycles >= CONSOLE_OUTPUT_CYCLES) {
+				cycles = 0;
+				time_global += time_current;
+				std::cout << "ice particles: " << particles << " time: " << time_current << "ms, sum: " << time_global << "ms\n";
+				time_current = 0;
+			}
+		}
+
+		
+	}
 	
     // Turn on programmable pipeline
     if (g_UseShaders)
@@ -116,8 +146,6 @@ void cbDisplay()
 		if(g_useMarchingCubes) {
 			glBegin(GL_TRIANGLES);
 			simulation->march();
-			//data = simulation->getData();
-			//vMarchingCubes();
 			glEnd();
 
 			/** /
@@ -150,9 +178,9 @@ void cbInitGL()
 {
 	//init data
 	if(COMPUTE_ON_GPU)
-		simulation = new GPUSimulation(WIDTH, HEIGHT, DEPTH);
+		simulation = new GPUSimulation();
 	else
-		simulation = new CPUSimulation(WIDTH, HEIGHT, DEPTH);
+		simulation = new CPUSimulation();
 
     // Init app GUI
     initGUI();

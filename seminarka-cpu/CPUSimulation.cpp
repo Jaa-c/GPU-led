@@ -1,14 +1,9 @@
 #include "CPUSimulation.h"
 
-CPUSimulation::CPUSimulation(int dataWidth, int dataHeight, int dataDepth) {
-	this->dataCount = dataWidth * dataHeight * dataDepth;
-	this->data = new Voxel[dataCount];
+CPUSimulation::CPUSimulation() {
+	this->data = new Voxel[DATA_SIZE];
 
 	this->cpumc = new CPUMarchingCubes();
-
-	this->dataWidth = dataWidth;
-	this->dataHeight = dataHeight;
-	this->dataDepth = dataDepth;
 }
 
 CPUSimulation::~CPUSimulation() {
@@ -25,36 +20,39 @@ void CPUSimulation::setData(Voxel * data) {
 }
 
 void CPUSimulation::march() {
-	this->cpumc->vMarchingCubes(this->data, this->dataCount);
+	this->cpumc->vMarchingCubes(this->data);
 }
 
-void CPUSimulation::updateParticles() {
+int CPUSimulation::updateParticles() {
 
 	Voxel* voxel;
 
-	for(int i = 0; i < dataWidth; i++) {
-		for(int j = 0; j < dataHeight; j++) {
-			for(int k = 0; k < dataDepth; k++) {
+	for(int i = 0; i < WIDTH; i++) {
+		for(int j = 0; j < HEIGHT; j++) {
+			for(int k = 0; k < DEPTH; k++) {
 				voxel = &data[DATA_INDEX(i,j,k)];
 				if(voxel->status != ICE)
 					continue;
 
 				//okolni castice zjistim podle indexu 
-				updateVoxel(i+neighbours[0][0] < dataWidth, voxel, &data[DATA_INDEX(i+neighbours[0][0],j,k)]);
-				updateVoxel(j+neighbours[1][1] < dataHeight, voxel, &data[DATA_INDEX(i,j+neighbours[1][1],k)]);
-				updateVoxel(k+neighbours[2][2] < dataDepth, voxel, &data[DATA_INDEX(i,j,k+neighbours[2][2])]);
+				updateVoxel(i+1 < WIDTH, voxel, &data[DATA_INDEX(i+1,j,k)]);
+				updateVoxel(j+1 < HEIGHT, voxel, &data[DATA_INDEX(i,j+1,k)]);
+				updateVoxel(k+1 < DEPTH, voxel, &data[DATA_INDEX(i,j,k+1)]);
 				
-				updateVoxel(i+neighbours[3][0] >= 0, voxel, &data[DATA_INDEX(i+neighbours[3][0],j,k)]);
-				updateVoxel(j+neighbours[4][1] >= 0, voxel, &data[DATA_INDEX(i,j+neighbours[4][1],k)]);
-				updateVoxel(k+neighbours[5][2] >= 0, voxel, &data[DATA_INDEX(i,j,k+neighbours[5][2])]);
+				updateVoxel(i-1 >= 0, voxel, &data[DATA_INDEX(i-1,j,k)]);
+				updateVoxel(j-1 >= 0, voxel, &data[DATA_INDEX(i,j-1,k)]);
+				updateVoxel(k-1 >= 0, voxel, &data[DATA_INDEX(i,j,k-1)]);
 
 				if(voxel->temperature > ZERO_DEG) {
 					voxel->status = WATER;
+					this->iceParticles--;
 				}
 
 			}
 		}
 	}
+
+	return this->iceParticles; 
 
 }
 
@@ -64,12 +62,16 @@ void CPUSimulation::init() {
 	float ofsj = HEIGHT/2.0f - 0.5f; 
 	float ofsk = DEPTH/2.0f - 0.5f; 
 
+	this->iceParticles = DATA_SIZE;
+
 	for(int i = 0; i < WIDTH; i++) {
 		for(int j = 0; j < HEIGHT; j++) {
 			for(int k = 0; k < DEPTH; k++) {
 				data[DATA_INDEX(i,j,k)].setPosition(i - ofsi, j - ofsj, k - ofsk);
-				if(i < AIR_VOXELS || j < AIR_VOXELS || k < AIR_VOXELS)
+				if(i < AIR_VOXELS || j < AIR_VOXELS || k < AIR_VOXELS) {
 					data[DATA_INDEX(i,j,k)].status = AIR; //nastavim maly okoli na vzduch
+					this->iceParticles--;
+				}
 			}
 		}
 	}
