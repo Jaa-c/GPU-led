@@ -17,7 +17,7 @@ public:
 	virtual void setData(Voxel * data);
 
 private:
-	void updateVoxel(bool condition, Voxel* voxel, Voxel* v);
+	void updateVoxel(bool condition, Voxel * writeVoxel,  Voxel * writeV , Voxel* readVoxel, Voxel* readV);
 	float transferHeat(Voxel * voxel, Voxel* v);
 	float ambientHeat(Voxel *voxel);
 

@@ -2,7 +2,7 @@
 #define __GPUCOMPUTATION_CUH__
 
 //inicializace cudy
-void cudaInit(Voxel * data, int * ice);
+void cudaInit(Voxel * readData, Voxel * writeData, int * ice);
 
 //uklizení po cudì
 void cudaFinalize();
@@ -11,7 +11,7 @@ void cudaFinalize();
 void cudaUpdateParticles(int * ice);
 
 //vraci ukazatel na data v pameti GPU
-Voxel * cudaGetHostDataPointer();
+Voxel * cudaGetDeviceDataPointer();
 
 //inicializace marching cubes, volá se jen jednou
 void cudaMarchInit(Voxel * host_data);

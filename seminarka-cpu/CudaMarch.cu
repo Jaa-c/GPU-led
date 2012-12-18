@@ -404,7 +404,7 @@ __global__ void marchCubes(Voxel * data, float * verticies, int count) {
 float * vertex_data;
 int vertex_count;
 void cudaMarchInit(Voxel * host_data) {
-	device_data_pointer = cudaGetHostDataPointer();
+	device_data_pointer = cudaGetDeviceDataPointer();
 	//host_data_pointer = device_data;
 
 	

@@ -4,7 +4,8 @@
 #include "GPUComputation.cuh"
 
 GPUSimulation::GPUSimulation() {
-	this->data = new Voxel[DATA_SIZE];
+	this->writeData = new Voxel[DATA_SIZE];
+	this->readData = new Voxel[DATA_SIZE];
 
 	this->cpumc = new CPUMarchingCubes();
 
@@ -12,33 +13,38 @@ GPUSimulation::GPUSimulation() {
 
 GPUSimulation::~GPUSimulation() {
 	cudaFinalize();
-	delete [] this->data;
+	delete [] this->writeData;
+	delete [] this->readData;
 }
 
+//debug
 Voxel* GPUSimulation::getData() {
-	return this->data;
+	return NULL;// this->writeData;
 }
 
 //debug
 void GPUSimulation::setData(Voxel * data) {
-	this->data = data;
+	//this->readData = data;
 }
 
 void GPUSimulation::march() {
-	this->cpumc->vMarchingCubes(this->data);
+	this->cpumc->vMarchingCubes(this->writeData);
 }
 
 int GPUSimulation::updateParticles() {
-	int * melt = new int[216];//todo
-	cudaUpdateParticles(melt);
-	int c = 0;
-	for(int i = 0; i < 216; i++) {
-		c += melt[i];
-		//if(melt[i] != 0)
-		//	std::cout << melt[i] << " ";
-	}
-	//std::cout << "\n";
-	this->iceParticles -= c;
+	
+	//std::swap(writeData, readData);
+
+	int melt = 0;//kolik castic roztalo v aktualni iteraci
+	cudaUpdateParticles(&melt);
+	//int c = 0;
+	//for(int i = 0; i < 216; i++) {
+	//	c += melt[i];
+	//	//if(melt[i] != 0)
+	//	//	std::cout << melt[i] << " ";
+	//}
+	////std::cout << "\n";
+	this->iceParticles -= melt;
 	return this->iceParticles;
 }
 
@@ -54,15 +60,15 @@ void GPUSimulation::init() {
 	for(int i = 0; i < WIDTH; i++) {
 		for(int j = 0; j < HEIGHT; j++) {
 			for(int k = 0; k < DEPTH; k++) {
-				data[DATA_INDEX(i,j,k)].setPosition(i - ofsi, j - ofsj, k - ofsk);
+				writeData[DATA_INDEX(i,j,k)].setPosition(i - ofsi, j - ofsj, k - ofsk);
 				if(i < AIR_VOXELS || j < AIR_VOXELS || k < AIR_VOXELS) {
-					data[DATA_INDEX(i,j,k)].status = AIR; //nastavim maly okoli na vzduch
+					writeData[DATA_INDEX(i,j,k)].status = AIR; //nastavim maly okoli na vzduch
 					this->iceParticles--;
 				}
 			}
 		}
 	}
 
-	cudaInit(this->data, &this->iceParticles);
+	cudaInit(this->readData, this->writeData, &this->iceParticles);
 }
 
