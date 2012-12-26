@@ -13,7 +13,7 @@ CPUSimulation::~CPUSimulation() {
 }
 
 Voxel* CPUSimulation::getData() {
-	return NULL;// this->writeData;
+	return this->writeData;
 }
 
 //debug
@@ -77,14 +77,13 @@ void CPUSimulation::init() {
 		for(int j = 0; j < HEIGHT; j++) {
 			for(int k = 0; k < DEPTH; k++) {
 				writeData[DATA_INDEX(i,j,k)].setPosition(i - ofsi, j - ofsj, k - ofsk);
-				if(i < AIR_VOXELS || j < AIR_VOXELS || k < AIR_VOXELS) {
+				if(i < AIR_VOXELS || j < AIR_VOXELS || k < AIR_VOXELS || ((i > 2*WIDTH/4 && i < 3*WIDTH/4) && (j < 2*HEIGHT/3))) {
 					writeData[DATA_INDEX(i,j,k)].status = AIR; //nastavim maly okoli na vzduch
 					this->iceParticles--;
 				}
 			}
 		}
 	}
-
 
 }
 
@@ -98,8 +97,12 @@ void CPUSimulation::init() {
 void CPUSimulation::updateVoxel(bool condition, Voxel * writeVoxel,  Voxel * writeV , Voxel* readVoxel, Voxel* readV) {
 	if(condition && readV->status == ICE) {
 		float change = transferHeat(readVoxel, readV);
-		writeV->temperature += change;
-		writeVoxel->temperature -= change;
+		if(readV->temperature > readVoxel->temperature) {
+			writeVoxel->temperature += change;
+		}
+		else {
+			writeVoxel->temperature -= change;
+		}
 	}
 	else {
 		writeVoxel->temperature += ambientHeat(readVoxel);

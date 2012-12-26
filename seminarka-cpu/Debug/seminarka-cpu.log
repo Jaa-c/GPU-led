@@ -1,4 +1,4 @@
-﻿Build started 12/19/2012 12:29:29 AM.
+﻿Build started 12/19/2012 3:27:45 PM.
      1>Project "D:\FEL\GPU\seminarka\seminarka-cpu\seminarka-cpu\seminarka-cpu.vcxproj" on node 2 (build target(s)).
      1>InitializeBuildStatus:
          Creating "Debug\gpu-seminarka.unsuccessfulbuild" because "AlwaysCreate" was specified.
@@ -12,18 +12,17 @@
        Skipping target "AddCudaCompilePropsDeps" because all output files are up-to-date with respect to the input files.
        CudaBuild:
          Compiling CUDA source file CudaUpdate.cu...
-         cmd.exe /C "C:\Users\Jaa\AppData\Local\Temp\cd1b1352a1d548408b9fbdd4891753e4.cmd"
+         cmd.exe /C "C:\Users\Jaa\AppData\Local\Temp\5237cc13f00b44bdb0207b75b23372f4.cmd"
          "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\bin\nvcc.exe" -gencode=arch=compute_10,code=\"sm_10,compute_10\" --use-local-env --cl-version 2010 -ccbin "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin"  -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\lib\Win32/" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\include" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\include"  -G   --keep-dir "Debug" -maxrregcount=0  --machine 32 --compile  -g   -D_MBCS -Xcompiler "/EHsc /W3 /nologo /Od /Zi /RTC1 /MDd  " -o "Debug\CudaUpdate.cu.obj" "D:\FEL\GPU\seminarka\seminarka-cpu\seminarka-cpu\CudaUpdate.cu"
          
          D:\FEL\GPU\seminarka\seminarka-cpu\seminarka-cpu>"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\bin\nvcc.exe" -gencode=arch=compute_10,code=\"sm_10,compute_10\" --use-local-env --cl-version 2010 -ccbin "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin"  -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\lib\Win32/" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\include" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\include"  -G   --keep-dir "Debug" -maxrregcount=0  --machine 32 --compile  -g   -D_MBCS -Xcompiler "/EHsc /W3 /nologo /Od /Zi /RTC1 /MDd  " -o "Debug\CudaUpdate.cu.obj" "D:\FEL\GPU\seminarka\seminarka-cpu\seminarka-cpu\CudaUpdate.cu" 
          CudaUpdate.cu
-         tmpxft_000097bc_00000000-2_CudaUpdate.cudafe1.gpu
-         tmpxft_000097bc_00000000-7_CudaUpdate.cudafe2.gpu
+         tmpxft_00009858_00000000-2_CudaUpdate.cudafe1.gpu
+         tmpxft_00009858_00000000-7_CudaUpdate.cudafe2.gpu
          CudaUpdate.cu
-         ptxas C:/Users/Jaa/AppData/Local/Temp/tmpxft_000097bc_00000000-4_CudaUpdate.ptx, line 1631; : warning : Double is not supported. Demoting to float
-         tmpxft_000097bc_00000000-2_CudaUpdate.cudafe1.cpp
-         tmpxft_000097bc_00000000-12_CudaUpdate.ii
-         Deleting file "tmpxft_000097bc_00000000-8_CudaUpdate.cpp3.o".
+         tmpxft_00009858_00000000-2_CudaUpdate.cudafe1.cpp
+         tmpxft_00009858_00000000-12_CudaUpdate.ii
+         Deleting file "tmpxft_00009858_00000000-8_CudaUpdate.cpp3.o".
        CudaBuild:
        Skipping target "CudaBuild" because all output files are up-to-date with respect to the input files.
        ClCompile:
@@ -49,4 +48,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:05.29
+Time Elapsed 00:00:05.34

@@ -6,6 +6,7 @@
 #define USE_ANTTWEAKBAR
 
 #include <iostream>
+#include <fstream>
 #include <Windows.h>
 #include <time.h>
 #include "../common/common.h"
@@ -39,7 +40,7 @@ bool     g_useMarchingCubes		= true;  // use geometry
 bool     g_drawPoints			= false;  // use geometry
 bool     g_melt					= false;  // to melt or not to melt?
 
-GLfloat  g_SceneTraZ			= 120.0f; //30 pro 16  // Scene translation along z-axis
+GLfloat  g_SceneTraZ			= std::max(std::max(DATA_WIDTH, DATA_HEIGHT), DATA_DEPTH) * 1.4f; // Scene translation along z-axis
 int realDataCount				= DATA_SIZE;
 
 /************************************************
@@ -70,6 +71,11 @@ void initGUI();
 
 static bool init = true;
 static bool initMelt = true;
+
+
+
+
+std::ofstream outputTest;
 //-----------------------------------------------------------------------------
 // Name: cbDisplay()
 // Desc: 
@@ -96,6 +102,13 @@ void cbDisplay()
 		glEnableVertexAttribArray(1);
 		srand ( time(NULL) );
 		simulation->init();
+
+		if(TEST_OUTPUT) {
+			if(COMPUTE_ON_GPU)
+				outputTest.open ("test-gpu.txt");
+			else
+				outputTest.open ("test-cpu.txt");
+		}
 	}
 
 	if(g_melt) {
@@ -115,6 +128,7 @@ void cbDisplay()
 		if(particles == 0) {
 			g_melt = false;
 			cycles = CONSOLE_OUTPUT_CYCLES;
+			outputTest.close();
 		}
 
 		if(CONSOLE_OUTPUT) {
@@ -126,6 +140,14 @@ void cbDisplay()
 				time_current = 0;
 			}
 		}
+
+		if(TEST_OUTPUT) {
+			Voxel * d = simulation->getData();
+			Voxel v = d[DATA_INDEX(5,5,5)];
+			if(v.status == ICE)
+				outputTest << v.temperature << "\n";
+		}
+
 
 		
 	}
@@ -271,13 +293,13 @@ void initGUI()
     TwBar *controlBar = TwNewBar("Controls");
     TwDefine(" Controls position='10 10' size='200 360' refresh=0.1 ");
 
-    TwAddVarCB(controlBar, "use_shaders", TW_TYPE_BOOLCPP, cbSetShaderStatus, cbGetShaderStatus, NULL, " label='shaders' key=s help='Turn programmable pipeline on/off.' ");
+//    TwAddVarCB(controlBar, "use_shaders", TW_TYPE_BOOLCPP, cbSetShaderStatus, cbGetShaderStatus, NULL, " label='shaders' key=s help='Turn programmable pipeline on/off.' ");
 
     // Shader panel setup
-    TwAddVarRW(controlBar, "vs", TW_TYPE_BOOLCPP, &g_UseVertexShader, " group='Shaders' label='vertex' key=v help='Toggle vertex shader.' ");
-    TwAddVarRW(controlBar, "gs", TW_TYPE_BOOLCPP, &g_UseGeometryShader, " group='Shaders' label='geometry' key=g help='Toggle geometry shader.' ");
-    TwAddVarRW(controlBar, "fs", TW_TYPE_BOOLCPP, &g_UseFragmentShader, " group='Shaders' label='fragment' key=f help='Toggle fragment shader.' ");
-    TwAddButton(controlBar, "build", cbCompileShaderProgram, NULL, " group='Shaders' label='build' key=b help='Build shader program.' ");
+//    TwAddVarRW(controlBar, "vs", TW_TYPE_BOOLCPP, &g_UseVertexShader, " group='Shaders' label='vertex' key=v help='Toggle vertex shader.' ");
+//    TwAddVarRW(controlBar, "gs", TW_TYPE_BOOLCPP, &g_UseGeometryShader, " group='Shaders' label='geometry' key=g help='Toggle geometry shader.' ");
+//    TwAddVarRW(controlBar, "fs", TW_TYPE_BOOLCPP, &g_UseFragmentShader, " group='Shaders' label='fragment' key=f help='Toggle fragment shader.' ");
+//    TwAddButton(controlBar, "build", cbCompileShaderProgram, NULL, " group='Shaders' label='build' key=b help='Build shader program.' ");
 //  TwDefine( " Controls/Shaders readonly=true ");   
 
     // Render panel setup
@@ -324,7 +346,7 @@ void cbKeyboardChanged(int key, int action)
     case 'T' : g_SceneTraZ        -= (g_SceneTraZ > 0.5) ? 0.5f : 0.0f;  break;
     case 'r' : g_SceneRotEnabled   = !g_SceneRotEnabled;                 break;
     case 'w' : g_WireMode          = !g_WireMode;                        break;
-    case 's' : g_UseShaders = !g_UseShaders;                             break;
+	case 'm' : g_melt			   = !g_melt;	                         break;
     case 'b' : 
         cbCompileShaderProgram(NULL);
         return;
