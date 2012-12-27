@@ -40,5 +40,8 @@ int GPUSimulation::updateParticles() {
 
 //data inicializuju na CPU, na GPU to jednoduše nejde :/
 void GPUSimulation::init() {
+	
+	
+
 	cudaInit(this->readData, this->writeData, &this->iceParticles);
 }

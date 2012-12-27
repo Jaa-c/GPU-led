@@ -46,6 +46,8 @@ bool     g_useMarchingCubes		= true;  // use geometry
 bool     g_drawPoints			= false;  // use geometry
 bool     g_melt					= false;  // to melt or not to melt?
 
+float	g_fps					= 0; //stores current fps
+
 GLfloat  g_SceneTraZ			= std::max(std::max(DATA_WIDTH, DATA_HEIGHT), DATA_DEPTH) * 1.4f; // Scene translation along z-axis
 int realDataCount				= DATA_SIZE;
 
@@ -70,7 +72,7 @@ void TW_CALL cbCompileShaderProgram(void *clientData);
 Simulation* simulation;
 int cycles;
 int particles;
-long begin, end;
+long begin, end, fps_begin, fps_time;
 long time_current, time_global;
 
 void initGUI();
@@ -78,8 +80,7 @@ void initGUI();
 static bool init = true;
 static bool initMelt = true;
 
-
-
+int fpsCounter;
 
 std::ofstream outputTest;
 //-----------------------------------------------------------------------------
@@ -108,6 +109,8 @@ void cbDisplay()
 		glEnableVertexAttribArray(1);
 		srand ( time(NULL) );
 		simulation->init();
+		g_fps = 0;
+		fps_begin = timeGetTime();
 
 		if(TEST_OUTPUT) {
 			if(COMPUTE_ON_GPU)
@@ -116,21 +119,31 @@ void cbDisplay()
 				outputTest.open ("test-cpu.txt");
 		}
 	}
+	
+	//count FPS
+	fpsCounter++;
+	fps_time = timeGetTime() - fps_begin;
+	if(fps_time > 1000) {
+		g_fps = fpsCounter/(fps_time/1000.0f);
+		fps_begin = timeGetTime();
+		fpsCounter = 0;
+	}
 
+	//melt ice
 	if(g_melt) {
 		if(initMelt) {
 			initMelt = false;
 			cycles = CONSOLE_OUTPUT_CYCLES;
 			time_global = 0;
 			time_current = 0;
-			
 		}
 
 		begin = timeGetTime();
 		particles = simulation->updateParticles();
 		end = timeGetTime();
 		time_current += end - begin;
-
+		
+		//job well done!
 		if(particles == 0) {
 			g_melt = false;
 			cycles = CONSOLE_OUTPUT_CYCLES;
@@ -316,6 +329,9 @@ void initGUI()
     TwAddVarRW(controlBar, "auto-rotation", TW_TYPE_BOOLCPP, &g_SceneRotEnabled, " group='Scene' label='rotation' key=r help='Toggle scene rotation.' ");
     TwAddVarRW(controlBar, "Translate", TW_TYPE_FLOAT, &g_SceneTraZ, " group='Scene' label='translate' min=1 max=1000 step=0.5 keyIncr=t keyDecr=T help='Scene translation.' ");
     TwAddVarRW(controlBar, "SceneRotation", TW_TYPE_QUAT4F, &g_SceneRot, " group='Scene' label='rotation' open help='Toggle scene orientation.' ");
+
+	TwAddVarRW(controlBar, "current fps", TW_TYPE_FLOAT, &g_fps, " group='FPS' label='fps' ");
+    
 #endif
 }
 

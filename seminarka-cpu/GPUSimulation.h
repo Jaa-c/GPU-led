@@ -19,7 +19,12 @@
 class GPUSimulation : public Simulation {
 
 public:
+	/** 
+	 * Implicit construtor allocates both buffers for the grid and 
+	 * creates new instance of marching cubes. 
+	 */
 	GPUSimulation();
+	/** Implicit destrutor frees allocated memory. */
 	~GPUSimulation();
 	virtual Voxel* getData();
 	virtual int updateParticles();
@@ -29,6 +34,7 @@ public:
 	virtual void setData(Voxel * data);
 
 private:
+	/** Pointer to marching cubes instance */
 	CPUMarchingCubes* cpumc;
 };
 

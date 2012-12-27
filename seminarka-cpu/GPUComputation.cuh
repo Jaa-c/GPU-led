@@ -12,22 +12,41 @@
 #ifndef __GPUCOMPUTATION_CUH__
 #define __GPUCOMPUTATION_CUH__
 
-//inicializace cudy
-void cudaInit(Voxel * readData, Voxel * writeData, int * ice);
+/**
+ * Initializes cuda, chooses cuda device, allocates device memory etc.
+ * Also initializes the default grid.
+ *
+ * @param[in] readData Pointer to read buffer in host memory
+ * @param[in,out] writeData Pointer to write buffer in host memory
+ * @param[out] host_ice Pointer to number of ice voxels(status=ICE) in host memory
+ */
+void cudaInit(Voxel * readData, Voxel * writeData, int * host_ice);
 
-//uklizení po cudì
+/** Cleanup, frees device memory */
 void cudaFinalize();
 
-//aktualizace mrizky
+/**
+ * Updates the whole grid
+ * 
+ * @param[out] ice Number of voxels that melted in this iteration
+ */
 void cudaUpdateParticles(int * ice);
 
-//vraci ukazatel na data v pameti GPU
+/**
+ * @return The pointer to the grid in device memory
+ */
 Voxel * cudaGetDeviceDataPointer();
 
-//inicializace marching cubes, volá se jen jednou
-void cudaMarchInit(Voxel * host_data);
+/**
+ * Initializes marching cubes. NOT IMPLEMENTED
+ *
+ * @param[in] host_data pointer to device data
+ */
+void cudaMarchInit(Voxel * device_data);
 
-//marching cubes in cuda
+/**
+ * Marching cubes in cuda. NOT IMPLEMETED
+ */
 void cudaMarchingCubes();
 
 #endif

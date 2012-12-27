@@ -41,7 +41,9 @@ inline void __cudaCheckError( const char *file, const int line ) {
 		file, line, cudaGetErrorString( err ) );
 	}
 }
+/** Handles last cuda error */
 #define CHECK_LAST_ERR() __cudaCheckError( __FILE__, __LINE__ )
+/** Handles cuda error, if thrown */
 #define CHECK_ERR( error ) HandleError( error, __FILE__, __LINE__ )
 
 

@@ -15,26 +15,46 @@
 #include "defines.h"
 #include "structures.h"
 
+/** Status if the voxel */
 enum Status {
 	ICE = 0,
 	WATER,
 	AIR
 };
 
+/** Voxel - one unit of the grid */
 struct Voxel {
+	/** Position in 3D space */
 	float position[3];
+	/** current teperature of the voxe */
 	float temperature;
+	/** velocity, not used in this program */
 	float velocity;
-	Status status;
-	float radius;//?
-	float area;//?
+	/** Mass of the voxel */
 	float mass;
+	/** Current status of the voxel */
+	Status status;
 
-	Voxel(float x, float y, float z);
+	/** 
+	 * Creates new voxel
+	 *
+	 * @param[in] x X coordinate in space
+	 * @param[in] y Y coordinate in space
+	 * @param[in] z Z coordinate in space
+	 */
+	Voxel(const float x, const float y, const float z);
 
+	/** Implicit constructor, does nothing */
 	Voxel();
 
-	void setPosition(float x, float y, float z);
+	/** 
+	 * Sets voxel position
+	 *
+	 * @param[in] x X coordinate in space
+	 * @param[in] y Y coordinate in space
+	 * @param[in] z Z coordinate in space
+	 */
+	void setPosition(const float x, const float y, const float z);
 };
 
 #endif

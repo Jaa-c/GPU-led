@@ -8,7 +8,7 @@ CPUMarchingCubes::CPUMarchingCubes() {
  * Marching cubes pro celou møížku
  *
  */
-void CPUMarchingCubes::vMarchingCubes(Voxel* data)
+void CPUMarchingCubes::vMarchingCubes(const Voxel* data)
 {
 	this->data = data;
 
@@ -27,10 +27,10 @@ void CPUMarchingCubes::vMarchingCubes(Voxel* data)
  * použit základ kódu z http://www.siafoo.net/snippet/100
  *
  */
- void CPUMarchingCubes::vMarchCube(const int fX, const  int fY, const int fZ, const GLfloat fScale) {
+ void CPUMarchingCubes::vMarchCube(const int fX, const  int fY, const int fZ) {
         GLint iCorner, iVertex, iVertexTest, iEdge, iTriangle, iFlagIndex, iEdgeFlags;
 		GLfloat fOffset;
-		Voxel* afCubeValue[8];
+		const Voxel* afCubeValue[8];
 		GLvector asEdgeVertex[12];
 		        
         //Make a local copy of the values at the cube's corners
@@ -76,11 +76,11 @@ void CPUMarchingCubes::vMarchingCubes(Voxel* data)
 				//TODO!!!
 				fOffset = 0.5f;
 
-				float* v = data[DATA_INDEX(fX, fY, fZ)].position;
+				const float * v = data[DATA_INDEX(fX, fY, fZ)].position;
 
-                asEdgeVertex[iEdge].fX = v[0] + (a2fVertexOffset[ a2iEdgeConnection[iEdge][0] ][0] + fOffset * a2fEdgeDirection[iEdge][0]) *fScale;
-                asEdgeVertex[iEdge].fY = v[1] + (a2fVertexOffset[ a2iEdgeConnection[iEdge][0] ][1] + fOffset * a2fEdgeDirection[iEdge][1]) *fScale;
-                asEdgeVertex[iEdge].fZ = v[2] + (a2fVertexOffset[ a2iEdgeConnection[iEdge][0] ][2] + fOffset * a2fEdgeDirection[iEdge][2]) *fScale;
+                asEdgeVertex[iEdge].fX = v[0] + (a2fVertexOffset[ a2iEdgeConnection[iEdge][0] ][0] + fOffset * a2fEdgeDirection[iEdge][0]);
+                asEdgeVertex[iEdge].fY = v[1] + (a2fVertexOffset[ a2iEdgeConnection[iEdge][0] ][1] + fOffset * a2fEdgeDirection[iEdge][1]);
+                asEdgeVertex[iEdge].fZ = v[2] + (a2fVertexOffset[ a2iEdgeConnection[iEdge][0] ][2] + fOffset * a2fEdgeDirection[iEdge][2]);
             }
         }
 

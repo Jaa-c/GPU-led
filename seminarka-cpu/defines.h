@@ -9,7 +9,6 @@
 */
 //----------------------------------------------------------------------------------------
 
-
 #ifndef __DEFINES_H__
 #define __DEFINES_H__
 
@@ -17,6 +16,11 @@
 
 /** Defines if we use GPU or CPU for computation. true = GPU. */
 #define COMPUTE_ON_GPU				true
+
+/** Ice block shape, uncomment the one you want to melt */
+//#define DATA1		//block
+#define DATA2		//2 connected blocks
+//#define DATA3		//block with holes
 
 /**
  * @defgroup PHYSICS Physical constants
@@ -34,11 +38,6 @@
 #define SPECIFIC_HEAT_CAP_ICE		2.11f
 /** @} */
 
-/** Defines if all particles have same mass or the mass is slightly different */
-#define PARTICLE_RANDOM_MASS		false
-/** used if PARTICLE_RANDOM_MASS = true, maximum random value added to particle mass */
-#define RAND_MASS_SIZE				(10e-5f)
-
 /** Initial ice temperature */
 #define PARTICLE_INIT_TEMPERATURE	(ZERO_DEG - 10.0f)
 /** Particle mass */
@@ -52,9 +51,9 @@
  *
  * @{
  */
-#define DATA_WIDTH					(78)
-#define DATA_HEIGHT					(48)
-#define DATA_DEPTH					(38)
+#define DATA_WIDTH					(98)
+#define DATA_HEIGHT					(68)
+#define DATA_DEPTH					(58)
 
 /** Initial air space surrounding ice block */
 #define AIR_VOXELS					2
@@ -67,11 +66,6 @@
 
 #define WIDTH_HEIGHT				(WIDTH*HEIGHT)
 /** @} */
-
-/** Ice block shape */
-#define DATA1		//block
-//#define DATA2		//2 connected blocks
-//#define DATA3		//block with holes
 
 /** 
  *  @defgroup WINDOW Initial window size

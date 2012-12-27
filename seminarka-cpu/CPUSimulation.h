@@ -16,10 +16,18 @@
 #include "Simulation.h"
 #include "CPUMarchingCubes.h"
 
+/**
+ * Class, that does the simulation on the CPU.
+ */
 class CPUSimulation : public Simulation {
 
 public:
+	/** 
+	 * Implicit construtor allocates both buffers for the grid and 
+	 * creates new instance of marching cubes. 
+	 */
 	CPUSimulation();
+	/** Implicit destrutor frees allocated memory. */
 	~CPUSimulation();
 	virtual Voxel* getData();
 	virtual int updateParticles();
@@ -29,10 +37,35 @@ public:
 	virtual void setData(Voxel * data);
 
 private:
-	void updateVoxel(bool condition, Voxel * writeVoxel,  Voxel * writeV , Voxel* readVoxel, Voxel* readV);
-	float transferHeat(Voxel * voxel, Voxel* v);
-	float ambientHeat(Voxel *voxel);
+	/**
+	 * Updates temperature of the given voxel based on neighbouring particle
+	 * 
+	 * @param[in] condition Condition, whether the neighbouring particle exists (isn't out of grid).
+	 * @param[in,out] writeVoxel Pointer to current voxel from the write buffer
+	 * @param[in,out] writeV Pointer to neighbouring voxel from the write buffer
+	 * @param[in] readVoxel Pointer to current voxel from the read buffer
+	 * @param[in] readV Pointer to neighbouring voxel from the read buffer
+	 */
+	void updateVoxel(const bool condition, Voxel * writeVoxel,  Voxel * writeV , const Voxel* readVoxel, const Voxel* readV);
+	/**
+	 * Computes transffered heat from one voxel to the other
+	 * 
+	 * @param[in] voxel Pointer to current voxel
+	 * @param[in] v Pointer to neighbouring voxel
+	 *
+	 * @return The amount of heat to transfer
+	 */
+	float transferHeat(const Voxel * voxel, const Voxel* v);
+	/**
+	 * Computes ambient heat, that voxel gets from surrounding air
+	 * 
+	 * @param[in] voxel Pointer to current voxel
+	 *
+	 * @return The amount of heat to transfer
+	 */
+	float ambientHeat(const Voxel *voxel);
 
+	/** Pointer to marching cubes instance */
 	CPUMarchingCubes* cpumc;
 };
 

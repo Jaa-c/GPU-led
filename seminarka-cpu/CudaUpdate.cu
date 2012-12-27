@@ -161,35 +161,28 @@ __global__ void initDataKernel(Voxel * data, int * icedata) {
 		v->position[0] = i - positionOffset[0];
 		v->position[1] = j - positionOffset[1];
 		v->position[2] = k - positionOffset[2];
+		//nechapu, proc to bez tohodle nasetovani nefunguje jak ma
 		v->status = ICE;
 		v->temperature = PARTICLE_INIT_TEMPERATURE;
-
-#ifdef DATA1
-		if(i < AIR_VOXELS || j < AIR_VOXELS || k < AIR_VOXELS) {
+		v->mass = PARTICLE_MASS;
+		bool cond = false;
+#ifdef	DATA1
+		cond = (i < AIR_VOXELS || j < AIR_VOXELS || k < AIR_VOXELS);
+#endif
+#ifdef	DATA2
+		cond = (i < AIR_VOXELS || j < AIR_VOXELS || k < AIR_VOXELS 
+				|| ((i > 2*WIDTH/4 && i < 3*WIDTH/4) && (j < 2*HEIGHT/3)));
+#endif
+#ifdef	DATA3
+		cond = (i < AIR_VOXELS || j < AIR_VOXELS || k < AIR_VOXELS 
+				|| ((j < 10 || j > 4*DEPTH/5) && (i % 20 > 10)));
+#endif
+		if(cond) {
 			v->status = AIR; //nastavim maly okoli na vzduch
 			v->temperature = AIR_TEMPERATURE;
 			cache[threadInBlock] = 0; //kolik bunek ledu roztalo?
 		}
 	}
-#endif
-#ifdef DATA2
-		if(i < AIR_VOXELS || j < AIR_VOXELS || k < AIR_VOXELS 
-			|| ((i > 2*WIDTH/4 && i < 3*WIDTH/4) && (j < 2*HEIGHT/3))) {
-			v->status = AIR; //nastavim maly okoli na vzduch
-			v->temperature = AIR_TEMPERATURE;
-			cache[threadInBlock] = 0; //kolik bunek ledu roztalo?
-		}
-	}
-#endif
-#ifdef DATA3
-		if(i < AIR_VOXELS || j < AIR_VOXELS || k < AIR_VOXELS 
-			|| ((i < 10) && (j % 20 > 10))) {
-			v->status = AIR; //nastavim maly okoli na vzduch
-			v->temperature = AIR_TEMPERATURE;
-			cache[threadInBlock] = 0; //kolik bunek ledu roztalo?
-		}
-	}
-#endif
 	//redukce pro vsechny vlakna
 	__syncthreads(); // synchronizace všech vláken
 
@@ -213,9 +206,6 @@ __global__ void initDataKernel(Voxel * data, int * icedata) {
 }
 
 
-/************************************************
-/ Inicializace cudy
-************************************************/
 void cudaInit(Voxel * readData, Voxel * writeData, int * host_ice) {
 	//choosing the best CUDA device
 	//code fragment taken from https://www.cs.virginia.edu/~csadmin/wiki/index.php/CUDA_Support/Choosing_a_GPU
@@ -251,6 +241,7 @@ void cudaInit(Voxel * readData, Voxel * writeData, int * host_ice) {
 	initDataKernel<<< gridRes, blockRes >>>(device_read_data, device_ice_data);
 	
 	CHECK_LAST_ERR();
+	//CHECK_ERR(cudaMemcpy(device_read_data, host_write_data, DATA_SIZE * sizeof(Voxel), cudaMemcpyHostToDevice));
 	CHECK_ERR(cudaMemcpy(device_write_data, device_read_data, DATA_SIZE * sizeof(Voxel), cudaMemcpyDeviceToDevice));
 	
 	//zkopirovani dat zpet na CPU

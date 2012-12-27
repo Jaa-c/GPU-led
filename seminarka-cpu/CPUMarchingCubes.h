@@ -6,7 +6,7 @@
  *
  *  Marching cubes algorithm implemented on the CPU.
  *
-*/
+ */
 //----------------------------------------------------------------------------------------
 
 
@@ -15,17 +15,35 @@
 
 #include "voxel.h"
 
+/**
+ * A class reprezenting marching cubes algorithm, implemented on the CPU.
+ */
 class CPUMarchingCubes {
 
 public:
+	/** Implicit constructor, does nothing */
 	CPUMarchingCubes();
+	/** Implicit destructor, does nothing */
 	~CPUMarchingCubes();
-	void vMarchingCubes(Voxel * data);
+	/**
+	 * Does the marching cubes algorithm, draws the surface on the 
+	 * edge between ice and air/water.
+	 *
+	 * @param[in] data pointer to the simulation grid
+	 */
+	void vMarchingCubes(const Voxel * data);
 
 private:
-	void vMarchCube(const int fX, const  int fY, const int fZ, const GLfloat fScale = 1.0f);
-	Voxel* data;
+	/**
+	 * Does the marching cubes algorithm on one voxel
+	 *
+	 * @param[in] fX X coordinate in the grid of current vocel
+	 * @param[in] fY Y coordinate in the grid of current vocel
+	 * @param[in] fZ Z coordinate in the grid of current vocel
+	 */
+	void vMarchCube(const int fX, const  int fY, const int fZ);
+	/** pointer to current grid */
+	const Voxel* data;
 };
-
 
 #endif

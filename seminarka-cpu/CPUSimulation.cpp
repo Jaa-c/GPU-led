@@ -1,8 +1,8 @@
 #include "CPUSimulation.h"
 
 CPUSimulation::CPUSimulation() {
-	this->writeData = new Voxel[DATA_SIZE];
-	this->readData = new Voxel[DATA_SIZE];
+	this->writeData = new Voxel[DATA_SIZE]();
+	this->readData = new Voxel[DATA_SIZE]();
 
 	this->cpumc = new CPUMarchingCubes();
 }
@@ -77,7 +77,19 @@ void CPUSimulation::init() {
 		for(int j = 0; j < HEIGHT; j++) {
 			for(int k = 0; k < DEPTH; k++) {
 				writeData[DATA_INDEX(i,j,k)].setPosition(i - ofsi, j - ofsj, k - ofsk);
-				if(i < AIR_VOXELS || j < AIR_VOXELS || k < AIR_VOXELS || ((i > 2*WIDTH/4 && i < 3*WIDTH/4) && (j < 2*HEIGHT/3))) {
+				bool cond = false;
+#ifdef	DATA1
+				cond = (i < AIR_VOXELS || j < AIR_VOXELS || k < AIR_VOXELS);
+#endif
+#ifdef	DATA2
+				cond = (i < AIR_VOXELS || j < AIR_VOXELS || k < AIR_VOXELS 
+						|| ((i > 2*WIDTH/4 && i < 3*WIDTH/4) && (j < 2*HEIGHT/3)));
+#endif
+#ifdef	DATA3
+				cond = (i < AIR_VOXELS || j < AIR_VOXELS || k < AIR_VOXELS 
+						|| ((j < 10 || j > 4*DEPTH/5) && (i % 20 > 10)));
+#endif
+				if(cond) {
 					writeData[DATA_INDEX(i,j,k)].status = AIR; //nastavim maly okoli na vzduch
 					this->iceParticles--;
 				}
@@ -94,7 +106,7 @@ void CPUSimulation::init() {
  * @param voxel - aktualni bunka
  * @param v - sousedni bunka
  */
-void CPUSimulation::updateVoxel(bool condition, Voxel * writeVoxel,  Voxel * writeV , Voxel* readVoxel, Voxel* readV) {
+void CPUSimulation::updateVoxel(const bool condition, Voxel * writeVoxel,  Voxel * writeV , const Voxel* readVoxel, const Voxel* readV) {
 	if(condition && readV->status == ICE) {
 		float change = transferHeat(readVoxel, readV);
 		if(readV->temperature > readVoxel->temperature) {
@@ -114,7 +126,7 @@ void CPUSimulation::updateVoxel(bool condition, Voxel * writeVoxel,  Voxel * wri
  *
  * @param voxel - aktualni buòka
  */
-float CPUSimulation::ambientHeat(Voxel *voxel) {
+float CPUSimulation::ambientHeat(const Voxel *voxel) {
 	return TIME_STEP * (
 		(THERMAL_CONDUCTIVITY * (AIR_TEMPERATURE - voxel->temperature))
 		/ (SPECIFIC_HEAT_CAP_ICE * voxel->mass)
@@ -127,7 +139,7 @@ float CPUSimulation::ambientHeat(Voxel *voxel) {
  * @param voxel - aktualni buòka
  * @param v - sousední buòka
  */
-float CPUSimulation::transferHeat(Voxel * voxel, Voxel* v) {
+float CPUSimulation::transferHeat(const Voxel * voxel, const Voxel* v) {
 	//TODO:: zapocitat do vzorecku hustotu materialu
 	if(voxel->status == ICE)
 		return TIME_STEP * (THERMAL_DIFFUSION_ICE * v->mass * (v->temperature - voxel->temperature) / DENSITY_ICE);
