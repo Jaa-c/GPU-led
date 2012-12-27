@@ -1,3 +1,15 @@
+//----------------------------------------------------------------------------------------
+/**
+ * @file       CPUMarchingCubes.h
+ * @author     Daniel Princ
+ * @date       2012/12/13
+ *
+ *  Marching cubes algorithm implemented on the CPU.
+ *
+*/
+//----------------------------------------------------------------------------------------
+
+
 #ifndef __CPUMARCHINGCUBES_H__
 #define __CPUMARCHINGCUBES_H__
 

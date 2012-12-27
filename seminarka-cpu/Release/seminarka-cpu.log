@@ -1,21 +1,50 @@
-﻿Build started 12/26/2012 10:21:32 PM.
-     1>Project "D:\FEL\GPU\seminarka\seminarka-cpu\seminarka-cpu\seminarka-cpu.vcxproj" on node 2 (clean target(s)).
-     1>_PrepareForClean:
-         Deleting file "Release\gpu-seminarka.lastbuildstate".
-       CudaClean:
-         cmd.exe /C "C:\Users\Jaa\AppData\Local\Temp\02290e582b1d4215ba5cacebcc266603.cmd"
-         "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\bin\nvcc.exe" -ccbin "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin"  -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\include" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\include"     --keep-dir "Release" -maxrregcount=0  --machine 32 --compile     -D_MBCS -Xcompiler "/EHsc /W3 /nologo /O2 /Zi  /MD  " -o "Release\CudaUpdate.cu.obj" "D:\FEL\GPU\seminarka\seminarka-cpu\seminarka-cpu\CudaUpdate.cu" -clean
+﻿Build started 12/27/2012 5:00:04 PM.
+     1>Project "D:\FEL\GPU\seminarka\seminarka-cpu\seminarka-cpu\seminarka-cpu.vcxproj" on node 2 (build target(s)).
+     1>InitializeBuildStatus:
+         Creating "Release\gpu-seminarka.unsuccessfulbuild" because "AlwaysCreate" was specified.
+       AddCudaCompileDeps:
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\cl.exe /E /nologo /showIncludes /TP /D__CUDACC__ /D_MBCS /I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\include" /I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\bin" /I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\include" /I. /FIcuda_runtime.h /c D:\FEL\GPU\seminarka\seminarka-cpu\seminarka-cpu\CudaUpdate.cu 
+       AddCudaCompileDeps:
+       Skipping target "AddCudaCompileDeps" because all output files are up-to-date with respect to the input files.
+       AddCudaCompilePropsDeps:
+       Skipping target "AddCudaCompilePropsDeps" because all output files are up-to-date with respect to the input files.
+       AddCudaCompilePropsDeps:
+       Skipping target "AddCudaCompilePropsDeps" because all output files are up-to-date with respect to the input files.
+       CudaBuild:
+         Compiling CUDA source file CudaUpdate.cu...
+         cmd.exe /C "C:\Users\Jaa\AppData\Local\Temp\b5cb29b8b69945efbca5dc7a2f888e56.cmd"
+         "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\bin\nvcc.exe" -gencode=arch=compute_20,code=\"sm_20,compute_20\" --use-local-env --cl-version 2010 -ccbin "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin"  -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\include" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\include"     --keep-dir "Release" -maxrregcount=0  --machine 32 --compile     -D_MBCS -Xcompiler "/EHsc /W3 /nologo /O2 /Zi  /MD  " -o "Release\CudaUpdate.cu.obj" "D:\FEL\GPU\seminarka\seminarka-cpu\seminarka-cpu\CudaUpdate.cu"
          
-         D:\FEL\GPU\seminarka\seminarka-cpu\seminarka-cpu>"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\bin\nvcc.exe" -ccbin "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin"  -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\include" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\include"     --keep-dir "Release" -maxrregcount=0  --machine 32 --compile     -D_MBCS -Xcompiler "/EHsc /W3 /nologo /O2 /Zi  /MD  " -o "Release\CudaUpdate.cu.obj" "D:\FEL\GPU\seminarka\seminarka-cpu\seminarka-cpu\CudaUpdate.cu" -clean 
-         Deleting file "Release\CudaUpdate.cu.deps".
-       CudaClean:
-         cmd.exe /C "C:\Users\Jaa\AppData\Local\Temp\b632e7080ea543be93bff922fd56e442.cmd"
-         "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\bin\nvcc.exe" -ccbin "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin"  -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\include" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\include"     --keep-dir "Release" -maxrregcount=0  --machine 32 --compile     -D_MBCS -Xcompiler "/EHsc /W3 /nologo /O2 /Zi  /MD  " -o "Release\CudaMarch.cu.obj" "D:\FEL\GPU\seminarka\seminarka-cpu\seminarka-cpu\CudaMarch.cu" -clean
-         
-         D:\FEL\GPU\seminarka\seminarka-cpu\seminarka-cpu>"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\bin\nvcc.exe" -ccbin "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin"  -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\include" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\include"     --keep-dir "Release" -maxrregcount=0  --machine 32 --compile     -D_MBCS -Xcompiler "/EHsc /W3 /nologo /O2 /Zi  /MD  " -o "Release\CudaMarch.cu.obj" "D:\FEL\GPU\seminarka\seminarka-cpu\seminarka-cpu\CudaMarch.cu" -clean 
-         Deleting file "Release\CudaMarch.cu.deps".
-     1>Done Building Project "D:\FEL\GPU\seminarka\seminarka-cpu\seminarka-cpu\seminarka-cpu.vcxproj" (clean target(s)).
+         D:\FEL\GPU\seminarka\seminarka-cpu\seminarka-cpu>"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\bin\nvcc.exe" -gencode=arch=compute_20,code=\"sm_20,compute_20\" --use-local-env --cl-version 2010 -ccbin "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin"  -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\include" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\include"     --keep-dir "Release" -maxrregcount=0  --machine 32 --compile     -D_MBCS -Xcompiler "/EHsc /W3 /nologo /O2 /Zi  /MD  " -o "Release\CudaUpdate.cu.obj" "D:\FEL\GPU\seminarka\seminarka-cpu\seminarka-cpu\CudaUpdate.cu" 
+         CudaUpdate.cu
+         tmpxft_000014ec_00000000-2_CudaUpdate.cudafe1.gpu
+         tmpxft_000014ec_00000000-7_CudaUpdate.cudafe2.gpu
+         CudaUpdate.cu
+         tmpxft_000014ec_00000000-2_CudaUpdate.cudafe1.cpp
+         tmpxft_000014ec_00000000-12_CudaUpdate.ii
+       CudaBuild:
+       Skipping target "CudaBuild" because all output files are up-to-date with respect to the input files.
+       ClCompile:
+         All outputs are up-to-date.
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"D:\FEL\GPU\seminarka\seminarka-cpu\Release\gpu-seminarka.exe" /NOLOGO /LIBPATH:../common/GLFW/msvc10 /LIBPATH:../common/GLEW /LIBPATH:../common/AntTweakBar /LIBPATH:"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\lib\Win32" opengl32.lib glu32.lib glfw.lib glew32.lib glut32.lib cudart.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Release\gpu-seminarka.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"D:\FEL\GPU\seminarka\seminarka-cpu\Release\gpu-seminarka.pdb" /OPT:REF /OPT:ICF /LTCG /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:\FEL\GPU\seminarka\seminarka-cpu\Release\gpu-seminarka.lib" /MACHINE:X86 Release\CudaUpdate.cu.obj
+         Release\CudaMarch.cu.obj
+         Release\CPUMarchingCubes.obj
+         Release\CPUSimulation.obj
+         Release\GPUMarchingCubes.obj
+         Release\GPUSimulation.obj
+         Release\main.obj
+         Release\Voxel.obj
+         Generating code
+         Finished generating code
+         seminarka-cpu.vcxproj -> D:\FEL\GPU\seminarka\seminarka-cpu\Release\gpu-seminarka.exe
+       Manifest:
+         C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /outputresource:"D:\FEL\GPU\seminarka\seminarka-cpu\Release\gpu-seminarka.exe;#1" /manifest "Release\gpu-seminarka.exe.intermediate.manifest"
+       FinalizeBuildStatus:
+         Deleting file "Release\gpu-seminarka.unsuccessfulbuild".
+         Touching "Release\gpu-seminarka.lastbuildstate".
+     1>Done Building Project "D:\FEL\GPU\seminarka\seminarka-cpu\seminarka-cpu\seminarka-cpu.vcxproj" (build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:01.19
+Time Elapsed 00:00:05.95

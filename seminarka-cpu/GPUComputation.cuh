@@ -1,3 +1,14 @@
+//----------------------------------------------------------------------------------------
+/**
+ * @file       GPUComputation.cuh
+ * @author     Daniel Princ
+ * @date       2012/12/13
+ *
+ *  Header file for cuda methods. 
+ *
+*/
+//----------------------------------------------------------------------------------------
+
 #ifndef __GPUCOMPUTATION_CUH__
 #define __GPUCOMPUTATION_CUH__
 
@@ -16,7 +27,7 @@ Voxel * cudaGetDeviceDataPointer();
 //inicializace marching cubes, volá se jen jednou
 void cudaMarchInit(Voxel * host_data);
 
-//marching cubes v cudì
+//marching cubes in cuda
 void cudaMarchingCubes();
 
 #endif

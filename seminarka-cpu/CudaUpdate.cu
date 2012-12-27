@@ -1,4 +1,4 @@
-#include "cudaCommon.cuh"
+Ôªø#include "cudaCommon.cuh"
 
 /************************************************
 *			   Ukazatele na data			    *
@@ -8,8 +8,7 @@ Voxel * device_read_data = 0;
 Voxel * host_write_data = 0;
 Voxel * host_read_data = 0;
 
-int * ice_data = 0;
-int * host_ice_data = 0;
+int * device_ice_data = 0;
 
 /************************************************
 *		   Velikost mrizky a bloku			    *
@@ -25,6 +24,7 @@ const dim3 gridRes(GRID_RES, GRID_RES, GRID_RES); //v zavislosti na datech
 *				Deklarace pameti			    *
 ************************************************/
 __shared__ int cache[BLOCK_THREADS];
+__constant__ float  positionOffset[3] = { WIDTH/2.0f - 0.5f, HEIGHT/2.0f - 0.5f, DEPTH/2.0f - 0.5f};
 __constant__ float thermal_diffusion[3] = {THERMAL_DIFFUSION_ICE, THERMAL_DIFFUSION_WATER, 1.0f};
 __constant__ float density[3] = {DENSITY_ICE, DENSITY_WATER, 1.0f};
 __constant__ int transfer[3] = {1, 1, 0};
@@ -77,7 +77,6 @@ __device__ __forceinline__ void updateVoxel(const bool condition, const  Voxel *
 / Kernel, ktery upravuje castice v kazde iteraci
 ************************************************/
 __global__ void updateParticlesKernel(const Voxel * readData, Voxel * writeData, int * icedata) {
-
 	const unsigned long blockId = blockIdx.x
 								+ blockIdx.y * gridDim.x
 								+ blockIdx.z * gridDim.x * gridDim.y;
@@ -119,15 +118,15 @@ __global__ void updateParticlesKernel(const Voxel * readData, Voxel * writeData,
 	}
 	
 	//redukce pro vsechny vlakna
-	__syncthreads(); // synchronizace vöech vl·ken
+	__syncthreads(); // synchronizace v≈°ech vl√°ken
 
 	int step = (BLOCK_THREADS >> 1);
 	while(step > 0) {
 		if (threadInBlock < step) {
 			cache[threadInBlock] += cache[threadInBlock + step];
 		}
-		__syncthreads(); // synchronizace vl·ken po provedenÌ kaûdÈ f·ze
-		step = (step >> 1); // zmenöenÌ kroku pro dalöÌ f·zi redukce
+		__syncthreads(); // synchronizace vl√°ken po proveden√≠ ka≈æd√© f√°ze
+		step = (step >> 1); // zmen≈°en√≠ kroku pro dal≈°√≠ f√°zi redukce
 	}
 
 	if(threadId == 0) {
@@ -135,10 +134,10 @@ __global__ void updateParticlesKernel(const Voxel * readData, Voxel * writeData,
 	}
 	__syncthreads();
 	if (threadInBlock == 0) {
-		//icedata[blockId] = cache[0];
 		atomicAdd(icedata, cache[0]);
 	}	
 }
+
 
 __global__ void initDataKernel(Voxel * data, int * icedata) {
 	const unsigned long blockId = blockIdx.x
@@ -157,40 +156,54 @@ __global__ void initDataKernel(Voxel * data, int * icedata) {
 		int i = threadId - j*WIDTH - k*WIDTH*HEIGHT;
 
 		cache[threadInBlock] = 1;
-
-		//constant memory
-		float ofsi = WIDTH/2.0f - 0.5f;
-		float ofsj = HEIGHT/2.0f - 0.5f;
-		float ofsk = DEPTH/2.0f - 0.5f;
-	
+			
 		Voxel* v = &data[threadId];
-		v->position[0] = i - ofsi;
-		v->position[1] = j - ofsj;
-		v->position[2] = k - ofsk;
+		v->position[0] = i - positionOffset[0];
+		v->position[1] = j - positionOffset[1];
+		v->position[2] = k - positionOffset[2];
 		v->status = ICE;
 		v->temperature = PARTICLE_INIT_TEMPERATURE;
-		
+
+#ifdef DATA1
 		if(i < AIR_VOXELS || j < AIR_VOXELS || k < AIR_VOXELS) {
 			v->status = AIR; //nastavim maly okoli na vzduch
 			v->temperature = AIR_TEMPERATURE;
 			cache[threadInBlock] = 0; //kolik bunek ledu roztalo?
 		}
 	}
-
+#endif
+#ifdef DATA2
+		if(i < AIR_VOXELS || j < AIR_VOXELS || k < AIR_VOXELS 
+			|| ((i > 2*WIDTH/4 && i < 3*WIDTH/4) && (j < 2*HEIGHT/3))) {
+			v->status = AIR; //nastavim maly okoli na vzduch
+			v->temperature = AIR_TEMPERATURE;
+			cache[threadInBlock] = 0; //kolik bunek ledu roztalo?
+		}
+	}
+#endif
+#ifdef DATA3
+		if(i < AIR_VOXELS || j < AIR_VOXELS || k < AIR_VOXELS 
+			|| ((i < 10) && (j % 20 > 10))) {
+			v->status = AIR; //nastavim maly okoli na vzduch
+			v->temperature = AIR_TEMPERATURE;
+			cache[threadInBlock] = 0; //kolik bunek ledu roztalo?
+		}
+	}
+#endif
 	//redukce pro vsechny vlakna
-	__syncthreads(); // synchronizace vöech vl·ken
+	__syncthreads(); // synchronizace v≈°ech vl√°ken
 
 	int step = (BLOCK_THREADS >> 1);
 	while(step > 0) {
 		if (threadInBlock < step) {
 			cache[threadInBlock] += cache[threadInBlock + step];
 		}
-		__syncthreads(); // synchronizace vl·ken po provedenÌ kaûdÈ f·ze
-		step = (step >> 1); // zmenöenÌ kroku pro dalöÌ f·zi redukce
+		__syncthreads(); // synchronizace vl√°ken po proveden√≠ ka≈æd√© f√°ze
+		step = (step >> 1); // zmen≈°en√≠ kroku pro dal≈°√≠ f√°zi redukce
 	}
 
 	if(threadId == 0) {
-		*icedata = 0;//inicializace na 0 v pamÏti gpu
+		*icedata = 0;//inicializace na 0 v pamƒõti gpu
 	}
 	__syncthreads();
 	if (threadInBlock == 0) {
@@ -232,17 +245,17 @@ void cudaInit(Voxel * readData, Voxel * writeData, int * host_ice) {
 	CHECK_ERR(cudaMalloc((void**)&device_read_data, DATA_SIZE * sizeof(Voxel)));
 	
 	//alokace pole na GPU pro vysledky z paralelni redukce
-	CHECK_ERR(cudaMalloc((void**)&ice_data, sizeof(int)));
+	CHECK_ERR(cudaMalloc((void**)&device_ice_data, sizeof(int)));
 
 	//inicializace dat
-	initDataKernel<<< gridRes, blockRes >>>(device_read_data, ice_data);
+	initDataKernel<<< gridRes, blockRes >>>(device_read_data, device_ice_data);
 	
 	CHECK_LAST_ERR();
 	CHECK_ERR(cudaMemcpy(device_write_data, device_read_data, DATA_SIZE * sizeof(Voxel), cudaMemcpyDeviceToDevice));
 	
 	//zkopirovani dat zpet na CPU
 	CHECK_ERR(cudaMemcpy(host_write_data, device_read_data, DATA_SIZE * sizeof(Voxel), cudaMemcpyDeviceToHost));
-	CHECK_ERR(cudaMemcpy(host_ice, ice_data, sizeof(int), cudaMemcpyDeviceToHost));
+	CHECK_ERR(cudaMemcpy(host_ice, device_ice_data, sizeof(int), cudaMemcpyDeviceToHost));
 	
 }
 
@@ -256,7 +269,7 @@ void cudaUpdateParticles(int * host_ice) {
 
 	CHECK_ERR(cudaMemcpy(device_write_data, device_read_data, DATA_SIZE * sizeof(Voxel), cudaMemcpyDeviceToDevice));
 	
-	updateParticlesKernel<<< gridRes, blockRes >>>(device_read_data, device_write_data, ice_data);
+	updateParticlesKernel<<< gridRes, blockRes >>>(device_read_data, device_write_data, device_ice_data);
 		
 	//CHECK_LAST_ERR();
 
@@ -264,8 +277,7 @@ void cudaUpdateParticles(int * host_ice) {
 	CHECK_ERR(cudaMemcpy(host_write_data, device_write_data, DATA_SIZE * sizeof(Voxel), cudaMemcpyDeviceToHost));
 
 	//prekopirujeme pocet roztatych bunek na CPU
-	//CHECK_ERR(cudaMemcpy(host_ice_data, ice_data, GRID_SIZE * sizeof(int), cudaMemcpyDeviceToHost));
-	CHECK_ERR(cudaMemcpy(host_ice, ice_data, sizeof(int), cudaMemcpyDeviceToHost));
+	CHECK_ERR(cudaMemcpy(host_ice, device_ice_data, sizeof(int), cudaMemcpyDeviceToHost));
 
 	//pockame nez se dokonci kopirovani dat - asi neni treba, cudaMemcpy je pry blokujici operace
 	CHECK_ERR(cudaDeviceSynchronize());
@@ -279,5 +291,5 @@ Voxel * cudaGetDeviceDataPointer() {
 void cudaFinalize() {
 	CHECK_ERR(cudaFree(&device_write_data));
 	CHECK_ERR(cudaFree(&device_read_data));
-	CHECK_ERR(cudaFree(&ice_data));
+	CHECK_ERR(cudaFree(&device_ice_data));
 }

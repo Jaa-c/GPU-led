@@ -42,4 +42,3 @@ int GPUSimulation::updateParticles() {
 void GPUSimulation::init() {
 	cudaInit(this->readData, this->writeData, &this->iceParticles);
 }
-

@@ -1,3 +1,15 @@
+//----------------------------------------------------------------------------------------
+/**
+ * @file       cudaCommon.cuhh
+ * @author     Daniel Princ
+ * @date       2012/12/13
+ *
+ *  Common methods a macros used in cuda.
+ *
+*/
+//----------------------------------------------------------------------------------------
+
+
 #ifndef __CUDACOMMON_CUH__
 #define __CUDACOMMON_CUH__
 

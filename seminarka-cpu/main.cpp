@@ -1,8 +1,14 @@
-//-----------------------------------------------------------------------------
-//  GPU - seminárka
-//  9.11.2012, Daniel Princ
-// 
-//-----------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------
+/**
+ * @file       main.cpp
+ * @author     Daniel Princ
+ * @date       2012/12/13
+ *
+ *  39GPU - seminární práce - simulace tání ledu na cpu a na gpu
+ *
+*/
+//----------------------------------------------------------------------------------------
+
 #define USE_ANTTWEAKBAR
 
 #include <iostream>
@@ -143,13 +149,11 @@ void cbDisplay()
 
 		if(TEST_OUTPUT) {
 			Voxel * d = simulation->getData();
-			Voxel v = d[DATA_INDEX(5,5,5)];
+			Voxel v = d[TEST_VOXEL];
 			if(v.status == ICE)
 				outputTest << v.temperature << "\n";
 		}
 
-
-		
 	}
 	
     // Turn on programmable pipeline
@@ -391,8 +395,14 @@ void TW_CALL cbGetShaderStatus(void *value, void *clientData)
 //-----------------------------------------------------------------------------
 int main(int argc, char* argv[]) 
 {
+	char * s;
+	if(COMPUTE_ON_GPU)
+		s = "[39GPU] Ice melting - GPU version";
+	else
+		s = "[39GPU] Ice melting - CPU version";
+
     return common_main(g_WindowWidth, g_WindowHeight,
-                       "[39GPU] Ice melting",
+                       s,
                        cbInitGL,              // init GL callback function
                        cbDisplay,             // display callback function
                        cbWindowSizeChanged,   // window resize callback function
