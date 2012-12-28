@@ -20,11 +20,13 @@ out block{
 
 const float SCALE = 15.0f;
 
+/**
+ * Only computing normals
+ */
 void main() {
 	
 	vec3 n = normalize(-cross((In[2].v_Position - In[0].v_Position).xyz, (In[1].v_Position - In[0].v_Position).xyz));
 
-	/**/
 	for (int i = 0; i < gl_in.length(); i++) {
 		Out.v_Color = In[i].v_Color;
 		Out.v_Normal = n; 
@@ -33,9 +35,8 @@ void main() {
 		EmitVertex();
 	}
 	EndPrimitive();
-	/**/
 
-	/** /
+	/* Vykreslení normál: * /
 	for(int i = 0; i < gl_in.length(); i++){
 		gl_Position = In[i].v_Position;
 		Out.v_Normal = n;

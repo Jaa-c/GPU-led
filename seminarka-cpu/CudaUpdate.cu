@@ -1,7 +1,18 @@
-﻿#include "cudaCommon.cuh"
+﻿//----------------------------------------------------------------------------------------
+/**
+ * @file       CudaUpdate.cu
+ * @author     Daniel Princ
+ * @date       2012/12/13
+ *
+ * Main cuda file, updates the grid on GPU
+ *
+*/
+//----------------------------------------------------------------------------------------
+
+#include "cudaCommon.cuh"
 
 /************************************************
-*			   Ukazatele na data			    *
+*			  Pointers to the data			    *
 ************************************************/
 Voxel * device_write_data = 0;
 Voxel * device_read_data = 0;
@@ -11,17 +22,22 @@ Voxel * host_read_data = 0;
 int * device_ice_data = 0;
 
 /************************************************
-*		   Velikost mrizky a bloku			    *
+*		     Grid and block size			    *
 ************************************************/
+/** Number of threads in block */
 #define	BLOCK_THREADS	512
+/** Grid resolution, based on data size */
 #define	GRID_RES		((int) (pow(DATA_SIZE / BLOCK_THREADS, 1.0f / 3.0f) + 1.0f))
+/** Size of the grid */
 #define GRID_SIZE		(GRID_RES*GRID_RES*GRID_RES)
 
-const dim3 blockRes(8,8,8);//512 vlaken
-const dim3 gridRes(GRID_RES, GRID_RES, GRID_RES); //v zavislosti na datech
+/** Cuda block resolution */
+const dim3 blockRes(8,8,8);
+/** Cuda grid resolution */
+const dim3 gridRes(GRID_RES, GRID_RES, GRID_RES);
 
 /************************************************
-*				Deklarace pameti			    *
+*				Memory declaration			    *
 ************************************************/
 __shared__ int cache[BLOCK_THREADS];
 __constant__ float  positionOffset[3] = { WIDTH/2.0f - 0.5f, HEIGHT/2.0f - 0.5f, DEPTH/2.0f - 0.5f};
@@ -30,9 +46,13 @@ __constant__ float density[3] = {DENSITY_ICE, DENSITY_WATER, 1.0f};
 __constant__ int transfer[3] = {1, 1, 0};
 
 
-/************************************************
-*				Device metody				    *
-************************************************/
+/**
+ * Computes ambient heat, that voxel gets from surrounding air
+ * 
+ * @param[in] data Pointer to device data
+ * @param[in] ivoxel Index in the data to the current voxel
+ * @return The amount of heat to transfer
+ */
 __device__ __forceinline__ float ambientHeat(const Voxel * data, const int ivoxel) {
 	return TIME_STEP * (
 		(THERMAL_CONDUCTIVITY * (AIR_TEMPERATURE - (&data[ivoxel])->temperature))
@@ -40,23 +60,31 @@ __device__ __forceinline__ float ambientHeat(const Voxel * data, const int ivoxe
 		);
 }
 
+/**
+ * Computes transffered heat from one voxel to the other
+ * 
+ * @param[in] data Pointer to device data
+ * @param[in] ivoxel Index in the data to the current voxel
+ * @param[in] iv Index in the data to the neighbouring voxel
+ *
+ * @return The amount of heat to transfer
+ */
 __device__ __forceinline__ float transferHeat(const Voxel * data, const int ivoxel, const int iv) {
 
 	return transfer[(&data[ivoxel])->status] * 
 		(TIME_STEP * (thermal_diffusion[(&data[ivoxel])->status] * 
 		(&data[iv])->mass * ((&data[iv])->temperature - (&data[ivoxel])->temperature) / density[(&data[ivoxel])->status]));
-	
-	//const Voxel * voxel = (&data[ivoxel]);
-	//const Voxel * v = &data[iv];
-	//if((&data[ivoxel])->status == ICE)
-	//	return TIME_STEP * (THERMAL_DIFFUSION_ICE * (&data[iv])->mass * ((&data[iv])->temperature - (&data[ivoxel])->temperature) / DENSITY_ICE);
-	//else if((&data[ivoxel])->status == WATER)
-	//	return TIME_STEP * (THERMAL_DIFFUSION_WATER * (&data[iv])->mass * ((&data[iv])->temperature - (&data[ivoxel])->temperature) / DENSITY_WATER);
-	//else
-	//	return 0;
 }
 
-__shared__ float tempChange[BLOCK_THREADS];
+/**
+ * Updates temperature of the given voxel based on neighbouring particle
+ * 
+ * @param[in] condition Condition, whether the neighbouring particle exists (isn't out of grid)
+ * @param[in] readData Pointer to device read buffer
+ * @param[in] writeData Pointer to device write buffer
+ * @param[in] iVoxel Index of current voxel in the read buffer
+ * @param[in] iV index of neighbouring voxel in the read buffer
+ */
 __device__ __forceinline__ void updateVoxel(const bool condition, const  Voxel * readData, Voxel* writeData, const int iVoxel, const int iV) {
 	
 	if(condition && (&readData[iV])->status == ICE) {
@@ -73,9 +101,13 @@ __device__ __forceinline__ void updateVoxel(const bool condition, const  Voxel *
 	}
 }
 
-/************************************************
-/ Kernel, ktery upravuje castice v kazde iteraci
-************************************************/
+/**
+ * Kernel, that updates the grid
+ * 
+ * @param[in] readData Pointer to device read buffer
+ * @param[in,out] writeData Pointer to device write buffer
+ * @param[out] icedata Number of voxels that have melted
+ */
 __global__ void updateParticlesKernel(const Voxel * readData, Voxel * writeData, int * icedata) {
 	const unsigned long blockId = blockIdx.x
 								+ blockIdx.y * gridDim.x
@@ -86,12 +118,12 @@ __global__ void updateParticlesKernel(const Voxel * readData, Voxel * writeData,
 	
 	const unsigned long threadId = threadInBlock + blockId * blockDim.x * blockDim.y * blockDim.z;
 	
-	cache[threadInBlock] = 0;//vynulejeme cache
+	cache[threadInBlock] = 0;//clear cache
 	
 	const Voxel * readVoxel;
 	Voxel * writeVoxel;
 
-	if(threadId < DATA_SIZE) { //pokud neni index vlakna mimo data
+	if(threadId < DATA_SIZE) { //check if threadId is withing data range
 		readVoxel = &readData[threadId];
 		writeVoxel = &writeData[threadId];
 		
@@ -100,7 +132,7 @@ __global__ void updateParticlesKernel(const Voxel * readData, Voxel * writeData,
 			int j = (threadId - (k*WIDTH_HEIGHT))/WIDTH;
 			int i = threadId - j*WIDTH - k*WIDTH_HEIGHT;
 			
-			//okolni castice zjistim podle indexu
+			//find out neighbouting particles
 			updateVoxel(i+1 < WIDTH, readData, writeData, threadId, DATA_INDEX(i+1,j,k));
 			updateVoxel(j+1 < HEIGHT, readData, writeData, threadId, DATA_INDEX(i,j+1,k));
 			updateVoxel(k+1 < DEPTH, readData, writeData, threadId, DATA_INDEX(i,j,k+1));
@@ -109,36 +141,41 @@ __global__ void updateParticlesKernel(const Voxel * readData, Voxel * writeData,
 			updateVoxel(j-1 >= 0, readData, writeData, threadId, DATA_INDEX(i,j-1,k));
 			updateVoxel(k-1 >= 0, readData, writeData, threadId, DATA_INDEX(i,j,k-1));
 	
-			//__syncthreads();
 			if(writeVoxel->temperature > ZERO_DEG) {
 				writeVoxel->status = WATER;
-				cache[threadInBlock] = 1; //kolik bunek ledu roztalo?
+				cache[threadInBlock] = 1; //this one voxel have melted
 			}
 		}
 	}
 	
-	//redukce pro vsechny vlakna
-	__syncthreads(); // synchronizace všech vláken
+	//we use parallel reduction to sum how many voxels have melted
+	__syncthreads();
 
 	int step = (BLOCK_THREADS >> 1);
 	while(step > 0) {
 		if (threadInBlock < step) {
 			cache[threadInBlock] += cache[threadInBlock + step];
 		}
-		__syncthreads(); // synchronizace vláken po provedení každé fáze
-		step = (step >> 1); // zmenšení kroku pro další fázi redukce
+		__syncthreads();
+		step = (step >> 1); //only half of the threads in next iteration
 	}
 
 	if(threadId == 0) {
-		*icedata = 0;//inicializace na 0
+		*icedata = 0; //initialize the sum to 0 (in GPU memory)
 	}
 	__syncthreads();
+
 	if (threadInBlock == 0) {
-		atomicAdd(icedata, cache[0]);
+		atomicAdd(icedata, cache[0]); //we use atomic operation to get the total sum 
 	}	
 }
 
-
+/**
+ * This kernel initializes the data in the beginning
+ * 
+ * @param[in] data Pointer to device write buffer
+ * @param[out] icedata Number of voxels in ICE state
+ */
 __global__ void initDataKernel(Voxel * data, int * icedata) {
 	const unsigned long blockId = blockIdx.x
 								+ blockIdx.y * gridDim.x
@@ -148,14 +185,15 @@ __global__ void initDataKernel(Voxel * data, int * icedata) {
 									  + threadIdx.z * blockDim.x * blockDim.y;
 	
 	const unsigned long threadId = threadInBlock + blockId * blockDim.x * blockDim.y * blockDim.z;
-	cache[threadInBlock] = 0;
+	
+	cache[threadInBlock] = 0; //this needs to be initialized, threadId might be out of range
 
 	if(threadId < DATA_SIZE) {
 		int k = threadId / (WIDTH*HEIGHT);
 		int j = (threadId - (k*WIDTH*HEIGHT))/WIDTH;
 		int i = threadId - j*WIDTH - k*WIDTH*HEIGHT;
 
-		cache[threadInBlock] = 1;
+		cache[threadInBlock] = 1; //this is ice
 			
 		Voxel* v = &data[threadId];
 		v->position[0] = i - positionOffset[0];
@@ -178,25 +216,26 @@ __global__ void initDataKernel(Voxel * data, int * icedata) {
 				|| ((j < 10 || j > 4*DEPTH/5) && (i % 20 > 10)));
 #endif
 		if(cond) {
-			v->status = AIR; //nastavim maly okoli na vzduch
+			v->status = AIR; //set voxel to air
 			v->temperature = AIR_TEMPERATURE;
-			cache[threadInBlock] = 0; //kolik bunek ledu roztalo?
+			cache[threadInBlock] = 0; //this is not ice
 		}
 	}
-	//redukce pro vsechny vlakna
-	__syncthreads(); // synchronizace všech vláken
+	
+	//we use parallel reduction to sum how many voxels are ice
+	__syncthreads();
 
 	int step = (BLOCK_THREADS >> 1);
 	while(step > 0) {
 		if (threadInBlock < step) {
 			cache[threadInBlock] += cache[threadInBlock + step];
 		}
-		__syncthreads(); // synchronizace vláken po provedení každé fáze
-		step = (step >> 1); // zmenšení kroku pro další fázi redukce
+		__syncthreads();
+		step = (step >> 1);
 	}
 
 	if(threadId == 0) {
-		*icedata = 0;//inicializace na 0 v paměti gpu
+		*icedata = 0;
 	}
 	__syncthreads();
 	if (threadInBlock == 0) {
@@ -251,9 +290,6 @@ void cudaInit(Voxel * readData, Voxel * writeData, int * host_ice) {
 }
 
 
-/************************************************
-/ metoda, ktera vola kernel pro update mrizky
-************************************************/
 void cudaUpdateParticles(int * host_ice) {
 	
 	std::swap(device_read_data, device_write_data);
@@ -264,13 +300,13 @@ void cudaUpdateParticles(int * host_ice) {
 		
 	//CHECK_LAST_ERR();
 
-	//zkopirovani dat zpet na CPU
+	//copy data back to CPU
 	CHECK_ERR(cudaMemcpy(host_write_data, device_write_data, DATA_SIZE * sizeof(Voxel), cudaMemcpyDeviceToHost));
 
-	//prekopirujeme pocet roztatych bunek na CPU
+	//copy the sum of voxels that have melted to CPU
 	CHECK_ERR(cudaMemcpy(host_ice, device_ice_data, sizeof(int), cudaMemcpyDeviceToHost));
 
-	//pockame nez se dokonci kopirovani dat - asi neni treba, cudaMemcpy je pry blokujici operace
+	//wait until GPU is done - cudaMemcpy should be blocking operation, but one never knows...
 	CHECK_ERR(cudaDeviceSynchronize());
 }
 
@@ -278,7 +314,7 @@ Voxel * cudaGetDeviceDataPointer() {
 	return device_write_data;
 }
 
-//uvolni prostredky alokovane cudou
+
 void cudaFinalize() {
 	CHECK_ERR(cudaFree(&device_write_data));
 	CHECK_ERR(cudaFree(&device_read_data));

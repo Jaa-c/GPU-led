@@ -8,13 +8,14 @@ in block {
 	vec3 v_Normal;
 } In;
 
+// light
 const vec3 light_pos = vec3(0.0, 0.0, 1.0);
 
+/**
+ * Only phong lightning
+ */
 void main() {
 
-	//gl_FragColor = In.v_Color;
-	//return;
-	
 	vec3 N = In.v_Normal;
 	vec3 E = normalize(In.v_viewPos);
 	vec3 L = normalize(light_pos - In.v_viewPos);

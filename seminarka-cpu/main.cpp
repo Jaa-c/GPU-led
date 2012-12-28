@@ -65,27 +65,22 @@ GLuint g_ProgramId = 0; // Shader program id
     void TW_CALL cbGetShaderStatus(void*, void*);
 #endif
 void TW_CALL cbCompileShaderProgram(void *clientData);
-
+void initGUI();
 /************************************************
 *				Simulation			    *
 ************************************************/
 Simulation* simulation;
-int cycles;
-int particles;
+int cycles, particles, fpsCounter;
 long begin, end, fps_begin, fps_time;
 long time_current, time_global;
-
-void initGUI();
 
 static bool init = true;
 static bool initMelt = true;
 
-int fpsCounter;
-
 std::ofstream outputTest;
 //-----------------------------------------------------------------------------
 // Name: cbDisplay()
-// Desc: 
+// Desc: Main display loop
 //-----------------------------------------------------------------------------
 void cbDisplay()
 {
@@ -211,7 +206,7 @@ void cbDisplay()
 
 //-----------------------------------------------------------------------------
 // Name: cbInitGL()
-// Desc: 
+// Desc: Initialize openGL
 //-----------------------------------------------------------------------------
 void cbInitGL()
 {
@@ -237,7 +232,7 @@ void cbInitGL()
 
 //-----------------------------------------------------------------------------
 // Name: cbCompileShaderProgram()
-// Desc: 
+// Desc: Do the shaders stuff
 //-----------------------------------------------------------------------------
 void TW_CALL cbCompileShaderProgram(void *clientData)
 {
@@ -295,7 +290,7 @@ void TW_CALL cbCompileShaderProgram(void *clientData)
 
 //-----------------------------------------------------------------------------
 // Name: initGUI()
-// Desc: 
+// Desc: Initialize ANTTWEAKBAR
 //-----------------------------------------------------------------------------
 void initGUI()
 {
@@ -338,7 +333,7 @@ void initGUI()
 
 //-----------------------------------------------------------------------------
 // Name: cbWindowSizeChanged()
-// Desc: 
+// Desc: Resize window
 //-----------------------------------------------------------------------------
 void cbWindowSizeChanged(int width, int height)
 {
@@ -392,7 +387,6 @@ void TW_CALL cbSetShaderStatus(const void *value, void *clientData)
     {
         cbCompileShaderProgram(NULL);
     }
-//  TwDefine((g_UseShaders) ? " Controls/Shaders readonly=false " : " Controls/Shaders readonly=true "); 
 }
 
 
