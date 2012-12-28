@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "seminarka-cpu", "seminarka-cpu\seminarka-cpu.vcxproj", "{C98F0141-99E7-4F75-B5A2-5B3337CDAF12}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gpu-seminarka", "seminarka-cpu\seminarka-cpu.vcxproj", "{C98F0141-99E7-4F75-B5A2-5B3337CDAF12}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

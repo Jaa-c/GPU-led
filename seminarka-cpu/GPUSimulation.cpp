@@ -1,4 +1,3 @@
-
 #include <iostream>
 #include "GPUSimulation.h"
 #include "GPUComputation.cuh"

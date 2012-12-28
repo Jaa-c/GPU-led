@@ -2,9 +2,9 @@
 /**
  * @file       Simulation.h
  * @author     Daniel Princ
- * @date       2012/12/13
- *
- *  Abstract class for simulation.
+ * @date       2012/12/13 
+ * @brief	   Abstract class for simulation.
+ *  
  *
  */
 //----------------------------------------------------------------------------------------
@@ -14,7 +14,12 @@
 
 #include <algorithm>
 #include "voxel.h"
-
+/**
+ * This class provides the basic interface for the simulation. 
+ * 
+ * It proovides methods to initialize the data, update the grid
+ * in each iteration and draw the data.
+ */
 class Simulation {
 protected:
 	/** Buffer in which the next state of the simulation grid is written */
@@ -32,7 +37,8 @@ public:
 	 */
 	virtual Voxel* getData() = 0;
 	/** 
-	 * Updates the whole grid
+	 * Updates the whole grid. This method should update each 
+	 * particle based on the state of 6 neigbouring particles.
 	 *
 	 * @return number of particles that have melted
 	 */

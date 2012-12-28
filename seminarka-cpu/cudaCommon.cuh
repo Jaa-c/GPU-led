@@ -1,8 +1,9 @@
 //----------------------------------------------------------------------------------------
 /**
- * @file       cudaCommon.cuhh
+ * @file       cudaCommon.cuh
  * @author     Daniel Princ
- * @date       2012/12/13
+ * @date       2012/12/13 
+ * @brief	   Common methods ind cuda
  *
  *  Common methods a macros used in cuda.
  *

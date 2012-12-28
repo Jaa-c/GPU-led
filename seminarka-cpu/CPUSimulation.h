@@ -2,7 +2,8 @@
 /**
  * @file       CPUSimulation.h
  * @author     Daniel Princ
- * @date       2012/12/13
+ * @date       2012/12/13 
+ * @brief	   Proveds simulation on the CPU
  *
  *  Simulation on the CPU
  *
@@ -18,6 +19,9 @@
 
 /**
  * Class, that does the simulation on the CPU.
+ *
+ * It provides methods to update the grid in each iteration
+ * and to draw the grid with marching cubes. 
  */
 class CPUSimulation : public Simulation {
 
@@ -38,7 +42,7 @@ public:
 
 private:
 	/**
-	 * Updates temperature of the given voxel based on neighbouring particle
+	 * Updates temperature of the given voxel based on 1 neighbouring particle
 	 * 
 	 * @param[in] condition Condition, whether the neighbouring particle exists (isn't out of grid).
 	 * @param[in,out] writeVoxel Pointer to current voxel from the write buffer

@@ -3,6 +3,7 @@
  * @file       CPUMarchingCubes.h
  * @author     Daniel Princ
  * @date       2012/12/13
+ * @brief	   Marching cubes implementation on the GPU
  *
  *  Marching cubes algorithm implemented on the CPU.
  *
@@ -17,6 +18,11 @@
 
 /**
  * A class reprezenting marching cubes algorithm, implemented on the CPU.
+ *
+ * This class has no buffer output, it produces triangles via glVertex3f().
+ * (That is not the best solution, should use VertexBufferObject, but that
+ * requires to pre-compute the number of triangles produced by marching cubes.
+ * That is quite complex problem.)
  */
 class CPUMarchingCubes {
 
@@ -35,14 +41,14 @@ public:
 
 private:
 	/**
-	 * Does the marching cubes algorithm on one voxel
+	 * Does the marching cubes algorithm on one voxel, generates 0-5 triangles with glVertex3f().
 	 *
 	 * @param[in] fX X coordinate in the grid of current vocel
 	 * @param[in] fY Y coordinate in the grid of current vocel
 	 * @param[in] fZ Z coordinate in the grid of current vocel
 	 */
 	void vMarchCube(const int fX, const  int fY, const int fZ);
-	/** pointer to current grid */
+	/** Pointer to current grid, that is used to create surface with marching cubes. */
 	const Voxel* data;
 };
 

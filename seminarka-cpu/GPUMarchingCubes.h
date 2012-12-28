@@ -2,9 +2,8 @@
 /**
  * @file       GPUMarchingCubes.h
  * @author     Daniel Princ
- * @date       2012/12/13
- *
- *  Marching cubes on GPU, only prepared file, algorithm isn't implemented.
+ * @date       2012/12/13 
+ * @brief	   Marching cubes on GPU, only prepared file, algorithm isn't implemented.
  *
 */
 //----------------------------------------------------------------------------------------
@@ -15,6 +14,10 @@
 
 #include "voxel.h"
 
+/**
+ * This is a prepared class for marching cubes implementation on GPU.
+ * The algorithm isn't implemented. (To be done in the future :)
+ */
 class GPUMarchingCubes {
 
 public:

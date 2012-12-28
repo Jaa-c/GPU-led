@@ -99,13 +99,6 @@ void CPUSimulation::init() {
 
 }
 
-/**
- * Updatuje buòku
- *
- * @param condition - jestli je bunka uvnitr mrizky
- * @param voxel - aktualni bunka
- * @param v - sousedni bunka
- */
 void CPUSimulation::updateVoxel(const bool condition, Voxel * writeVoxel,  Voxel * writeV , const Voxel* readVoxel, const Voxel* readV) {
 	if(condition && readV->status == ICE) {
 		float change = transferHeat(readVoxel, readV);
@@ -121,11 +114,6 @@ void CPUSimulation::updateVoxel(const bool condition, Voxel * writeVoxel,  Voxel
 	}
 }
 
-/**
- * Dodá buòce "ambientní" teplotu okolí - tedy teplotu od vzduchu
- *
- * @param voxel - aktualni buòka
- */
 float CPUSimulation::ambientHeat(const Voxel *voxel) {
 	return TIME_STEP * (
 		(THERMAL_CONDUCTIVITY * (AIR_TEMPERATURE - voxel->temperature))
@@ -133,12 +121,6 @@ float CPUSimulation::ambientHeat(const Voxel *voxel) {
 		);
 }
 
-/**
- * Vypoète kolik tepla se pøenese mezi èásticemi
- *
- * @param voxel - aktualni buòka
- * @param v - sousední buòka
- */
 float CPUSimulation::transferHeat(const Voxel * voxel, const Voxel* v) {
 	//TODO:: zapocitat do vzorecku hustotu materialu
 	if(voxel->status == ICE)

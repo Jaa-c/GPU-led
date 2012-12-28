@@ -1,0 +1,9 @@
+/**
+\mainpage 39GPU - Simulace tání ledu
+
+Dokumentace k seminární práci k předmětu A4M39GPU. Práce se týká vytvoření simulace tání ledu na GPU a na CPU a porovnání obou implementací.
+
+Daniel Princ (princdan@fel.cvut.cz)
+
+28.12.2012
+*/

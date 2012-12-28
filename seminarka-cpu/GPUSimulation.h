@@ -2,9 +2,9 @@
 /**
  * @file       GPUSimulation.h
  * @author     Daniel Princ
- * @date       2012/12/13
+ * @date       2012/12/13 
+ * @brief	   Simulation on the GPU
  *
- *  Simulation on the GPU
  *
 */
 //----------------------------------------------------------------------------------------

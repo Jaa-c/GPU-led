@@ -2,9 +2,8 @@
 /**
  * @file       GPUComputation.cuh
  * @author     Daniel Princ
- * @date       2012/12/13
- *
- *  Header file for cuda methods. 
+ * @date       2012/12/13 
+ * @brief	   Header file containing forward declarations for methods in cuda. 
  *
 */
 //----------------------------------------------------------------------------------------
@@ -14,7 +13,7 @@
 
 /**
  * Initializes cuda, chooses cuda device, allocates device memory etc.
- * Also initializes the default grid.
+ * Also initializes the default values in the grid (eg. voxels location etc.).
  *
  * @param[in] readData Pointer to read buffer in host memory
  * @param[in,out] writeData Pointer to write buffer in host memory
@@ -22,11 +21,12 @@
  */
 void cudaInit(Voxel * readData, Voxel * writeData, int * host_ice);
 
-/** Cleanup, frees device memory */
+/** Cleanup, frees resources used by the device. */
 void cudaFinalize();
 
 /**
- * Updates the whole grid
+ * Updates the whole grid. This method should update each 
+ * particle based on the state of 6 neigbouring particles.
  * 
  * @param[out] ice Number of voxels that melted in this iteration
  */

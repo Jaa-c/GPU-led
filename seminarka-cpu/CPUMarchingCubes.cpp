@@ -4,10 +4,6 @@
 CPUMarchingCubes::CPUMarchingCubes() {
 }
 
-/**
- * Marching cubes pro celou møížku
- *
- */
 void CPUMarchingCubes::vMarchingCubes(const Voxel* data)
 {
 	this->data = data;
@@ -21,7 +17,7 @@ void CPUMarchingCubes::vMarchingCubes(const Voxel* data)
 }
 
 
-/**
+/*
  * Marching cubes na jedný kostce (8 voxelù)
  *
  * použit základ kódu z http://www.siafoo.net/snippet/100

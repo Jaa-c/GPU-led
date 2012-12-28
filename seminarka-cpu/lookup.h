@@ -2,9 +2,9 @@
 /**
  * @file       lookup.h
  * @author     Daniel Princ
- * @date       2012/12/13
- *
- *  Lookup tables, mostly for marching cubes
+ * @date       2012/12/13 
+ * @brief	   Lookup tables, mostly for marching cubes.
+ *  
  *
 */
 //----------------------------------------------------------------------------------------
@@ -15,7 +15,7 @@
 
 #include "../GL/glut.h"
 
-//multiply by sign
+/** multiply by sign */
 static const int sign[2] =  {-1, 1};
 
 ///a2fVertexOffset lists the positions, relative to vertex0, of each of the 8 vertices of a cube

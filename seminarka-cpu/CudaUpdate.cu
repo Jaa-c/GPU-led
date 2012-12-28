@@ -2,9 +2,8 @@
 /**
  * @file       CudaUpdate.cu
  * @author     Daniel Princ
- * @date       2012/12/13
- *
- * Main cuda file, updates the grid on GPU
+ * @date       2012/12/13 
+ * @brief	   Main cuda file, updates the grid on GPU
  *
 */
 //----------------------------------------------------------------------------------------
@@ -14,11 +13,16 @@
 /************************************************
 *			  Pointers to the data			    *
 ************************************************/
+/** Pointer to write buffer in the device memory */
 Voxel * device_write_data = 0;
+/** Pointer to read buffer in the device memory */
 Voxel * device_read_data = 0;
+/** Pointer to write buffer in the host memory */
 Voxel * host_write_data = 0;
+/** Pointer to read buffer in the host memory */
 Voxel * host_read_data = 0;
 
+/** Pointer to sum of melted voxels in the device memory */
 int * device_ice_data = 0;
 
 /************************************************
@@ -39,10 +43,15 @@ const dim3 gridRes(GRID_RES, GRID_RES, GRID_RES);
 /************************************************
 *				Memory declaration			    *
 ************************************************/
+/** Cache for parallel reduction */
 __shared__ int cache[BLOCK_THREADS];
+/** Offset that moves the the middle of the ice block to 0,0,0 coordinates */
 __constant__ float  positionOffset[3] = { WIDTH/2.0f - 0.5f, HEIGHT/2.0f - 0.5f, DEPTH/2.0f - 0.5f};
+/** Lookup table for thermal diffusion constant */
 __constant__ float thermal_diffusion[3] = {THERMAL_DIFFUSION_ICE, THERMAL_DIFFUSION_WATER, 1.0f};
+/** Lookup table for material density */
 __constant__ float density[3] = {DENSITY_ICE, DENSITY_WATER, 1.0f};
+/** Lookup table that determines if the heat is transferred or nor (based od voxel state) */
 __constant__ int transfer[3] = {1, 1, 0};
 
 
@@ -199,10 +208,12 @@ __global__ void initDataKernel(Voxel * data, int * icedata) {
 		v->position[0] = i - positionOffset[0];
 		v->position[1] = j - positionOffset[1];
 		v->position[2] = k - positionOffset[2];
+
 		//nechapu, proc to bez tohodle nasetovani nefunguje jak ma
 		v->status = ICE;
 		v->temperature = PARTICLE_INIT_TEMPERATURE;
 		v->mass = PARTICLE_MASS;
+
 		bool cond = false;
 #ifdef	DATA1
 		cond = (i < AIR_VOXELS || j < AIR_VOXELS || k < AIR_VOXELS);

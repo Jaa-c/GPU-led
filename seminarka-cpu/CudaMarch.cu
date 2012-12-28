@@ -1,3 +1,16 @@
+//----------------------------------------------------------------------------------------
+/**
+ * @file       CudaMarch.cuh
+ * @author     Daniel Princ
+ * @date       2012/12/13 
+ * @brief	   Prepared file for marching cubes on GPU, not implemented
+ * 
+ * This file is preparation for marching cubes in cuda,
+ * however it is not implemented.
+ *
+*/
+//----------------------------------------------------------------------------------------
+
 #include "cudaCommon.cuh"
 #include "GPUComputation.cuh"
 
