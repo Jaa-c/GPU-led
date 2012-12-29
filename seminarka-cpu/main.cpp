@@ -37,6 +37,8 @@ const char* FS_FILE_NAME		= "simple.frag";
 
 /** Defines if we use GPU or CPU for computation. true = GPU. */
 bool	 g_useGPU				= true;
+/** handles restart */
+bool	 g_initData				= false;
 
 /** Window width */
 GLint    g_WindowWidth			= WINDOW_WIDTH;
@@ -56,7 +58,7 @@ bool     g_useMarchingCubes		= true;
 bool     g_melt					= false;
 /** Stores current fps value */
 float	 g_fps					= 0;
- 
+
 /** Scene translation along z-axis */
 GLfloat  g_SceneTraZ			= std::max(std::max(DATA_WIDTH, DATA_HEIGHT), DATA_DEPTH) * 1.4f;
 /** Current data size (number of ICE voxels) */
@@ -81,7 +83,8 @@ long begin, end, fps_begin, fps_time;
 /* Additional variables for object counting */
 int cycles, particles, fpsCounter;
 
-static bool initMelt = true;
+/** initialize new data */
+bool initMelt = true;
 
 /** File for the test output */
 std::ofstream outputTest;
@@ -124,19 +127,21 @@ void cbDisplay()
 		fpsCounter = 0;
 	}
 
+	if(g_initData) { //on restart
+		g_initData = false;
+		simulation->init();
+		time_global = 0;
+		time_current = 0;
+		cycles = CONSOLE_OUTPUT_CYCLES;
+		if(CONSOLE_OUTPUT) {
+			std::cout << "\n    # Restarting...\n";
+		}
+	}
 
 	//melt ice
 	if(g_melt) {
 		if(initMelt) {
 			initMelt = false;
-
-			//init data
-			if(!g_useGPU) {
-				delete simulation;
-				simulation = new CPUSimulation();
-				simulation->init();
-			}
-			
 			cycles = CONSOLE_OUTPUT_CYCLES;
 			time_global = 0;
 			time_current = 0;
@@ -159,7 +164,10 @@ void cbDisplay()
 			if(cycles >= CONSOLE_OUTPUT_CYCLES) {
 				cycles = 0;
 				time_global += time_current;
-				std::cout << "ice particles: " << particles << " time: " << time_current << "ms, sum: " << time_global << "ms\n";
+				char * s = "GPU";
+				if(!g_useGPU)
+					s = "CPU";
+				std::cout << s << " > ice particles: " << particles << " time: " << time_current << "ms, sum: " << time_global << "ms\n";
 				time_current = 0;
 			}
 		}
@@ -287,10 +295,25 @@ void TW_CALL cbCompileShaderProgram(void *clientData)
 /** Anttweakbar callback for gpu vs cpu button */
 void TW_CALL cbSetGPUUsage(const void *value, void *clientData)
 {
-    if (!g_melt)
+    if (!g_melt) //change only if not melting
     {
         g_useGPU = !g_useGPU;
     }
+	else {
+		if(CONSOLE_OUTPUT) {
+			std::cout << "    # Stop simulation before changing device..\n";
+		}
+		return;
+	}
+
+	delete simulation;
+	g_initData = true;
+	if(g_useGPU) {
+		simulation = new GPUSimulation();
+	}
+	else {
+		simulation = new CPUSimulation();
+	}
 }
 
 /** Anttweakbar callback for gpu vs cpu button */
@@ -310,9 +333,10 @@ void initGUI()
 
     TwWindowSize(g_WindowWidth, g_WindowHeight);
     TwBar *controlBar = TwNewBar("Controls");
-    TwDefine("Controls position='10 10' size='200 360' refresh=0.1  color='130 140 150'");
-
-	TwAddVarCB(controlBar, "gpu", TW_TYPE_BOOLCPP, cbSetGPUUsage, cbGetGPUUsage, NULL, " group='CUDA' label='Use GPU?' ");
+    TwDefine("Controls position='10 10' size='200 300' refresh=0.1  color='130 140 150'");
+	
+	TwAddVarCB(controlBar, "gpu", TW_TYPE_BOOLCPP, cbSetGPUUsage, cbGetGPUUsage, NULL, " group='CUDA' label='Compute on:' true='GPU' false='CPU' ");
+	//TwAddVarRW(controlBar, "restart", TW_TYPE_BOOLCPP, &g_initData, " group='PROGRAM' label='Restart: ' true='' false='restart' ");
     
     TwAddVarRW(controlBar, "wiremode", TW_TYPE_BOOLCPP, &g_WireMode, " group='Render' label='Wire mode' key=w help='Toggle wire mode.' ");
     TwAddVarRW(controlBar, "march", TW_TYPE_BOOLCPP, &g_useMarchingCubes, " group='Render' label='March. Cubes' help='Toggle marching cubes.' ");
@@ -322,7 +346,7 @@ void initGUI()
     TwAddVarRW(controlBar, "Translate", TW_TYPE_FLOAT, &g_SceneTraZ, " group='Scene' label='translate' min=1 max=1000 step=10 keyIncr=t keyDecr=T help='Scene translation.' ");
     TwAddVarRW(controlBar, "SceneRotation", TW_TYPE_QUAT4F, &g_SceneRot, " group='Scene' label='rotation' open help='Toggle scene orientation.' ");
 
-	TwAddVarRW(controlBar, "fps", TW_TYPE_FLOAT, &g_fps, " group='FPS' label='Current fps' ");
+	TwAddVarRO(controlBar, "fps", TW_TYPE_FLOAT, &g_fps, " group='FPS' label='Current fps' ");
 }
 
 /**

@@ -1,10 +1,9 @@
 //----------------------------------------------------------------------------------------
 /**
- * @file       Voxel.h
+ * @file       voxel.h
  * @author     Daniel Princ
- * @date       2012/12/13
- *
- *  Data structure for a voxel - one unit of the simulation grid.
+ * @date       2012/12/13 
+ * @brief	   Data structure for a voxel - one unit of the simulation grid.
  *
 */
 //----------------------------------------------------------------------------------------
@@ -15,28 +14,31 @@
 #include "defines.h"
 #include "structures.h"
 
-/** Status if the voxel */
+/** State of the voxel */
 enum Status {
 	ICE = 0,
 	WATER,
 	AIR
 };
 
-/** Voxel - one unit of the grid */
+/**
+ * Voxel is a basic data structure, that represents one 
+ * unit in the simulation grid.
+ */
 struct Voxel {
-	/** Position in 3D space */
+	/** Position of the unit in 3D space */
 	float position[3];
-	/** current teperature of the voxe */
+	/** Current teperature of the voxel */
 	float temperature;
-	/** velocity, not used in this program */
+	/** Velocity, currently not used in this program */
 	float velocity;
 	/** Mass of the voxel */
 	float mass;
-	/** Current status of the voxel */
+	/** Current status of the voxel based on the tempearture */
 	Status status;
 
 	/** 
-	 * Creates new voxel
+	 * Creates new voxel in a given location
 	 *
 	 * @param[in] x X coordinate in space
 	 * @param[in] y Y coordinate in space
@@ -48,7 +50,7 @@ struct Voxel {
 	Voxel();
 
 	/** 
-	 * Sets voxel position
+	 * Sets voxel position in 3D space
 	 *
 	 * @param[in] x X coordinate in space
 	 * @param[in] y Y coordinate in space
