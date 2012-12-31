@@ -90,7 +90,7 @@ __device__ __forceinline__ float transferHeat(const Voxel * data, const int ivox
  * 
  * @param[in] condition Condition, whether the neighbouring particle exists (isn't out of grid)
  * @param[in] readData Pointer to device read buffer
- * @param[in] writeData Pointer to device write buffer
+ * @param[out] writeData Pointer to device write buffer
  * @param[in] iVoxel Index of current voxel in the read buffer
  * @param[in] iV index of neighbouring voxel in the read buffer
  */

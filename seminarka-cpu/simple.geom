@@ -7,13 +7,13 @@ layout (triangle_strip, max_vertices=3) out;
 in block{
 	vec4 v_Color;
 	vec4 v_Position;
-	vec3 v_viewPos;
+	//vec3 v_viewPos;
 } In[];
 
 
 out block{
 	vec4 v_Color;
-	vec3 v_viewPos;
+	vec3 v_Position;
 	vec3 v_Normal;
 } Out;
 
@@ -30,7 +30,8 @@ void main() {
 	for (int i = 0; i < gl_in.length(); i++) {
 		Out.v_Color = In[i].v_Color;
 		Out.v_Normal = n; 
-		Out.v_viewPos = In[i].v_viewPos;
+		//Out.v_viewPos = In[i].v_viewPos;
+		Out.v_Position = In[i].v_Position.xyz;
 		gl_Position = In[i].v_Position;
 		EmitVertex();
 	}

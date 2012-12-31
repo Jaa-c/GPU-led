@@ -14,6 +14,7 @@
 
 #include <algorithm>
 #include "voxel.h"
+
 /**
  * This class provides the basic interface for the simulation. 
  * 
@@ -54,6 +55,15 @@ public:
 	 */
 	virtual void setData(Voxel * data) = 0;
 
+	/**
+	 * Returns number of ice particles
+	 * @return number of ice particles
+	 */
+	int getIceParticles() {
+		return this->iceParticles;
+	}
+
 };
+
 
 #endif

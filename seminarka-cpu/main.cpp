@@ -58,6 +58,8 @@ bool     g_useMarchingCubes		= true;
 bool     g_melt					= false;
 /** Stores current fps value */
 float	 g_fps					= 0;
+/** Stores current ice particles */
+float	 g_iceParticles			= 0;
 
 /** Scene translation along z-axis */
 GLfloat  g_SceneTraZ			= std::max(std::max(DATA_WIDTH, DATA_HEIGHT), DATA_DEPTH) * 1.4f;
@@ -122,7 +124,7 @@ void cbDisplay()
 	fpsCounter++;
 	fps_time = timeGetTime() - fps_begin;
 	if(fps_time > 1000) {
-		g_fps = fpsCounter/(fps_time/1000.0f);
+		g_fps = fpsCounter;//(fps_time/1000.0f);
 		fps_begin = timeGetTime();
 		fpsCounter = 0;
 	}
@@ -130,6 +132,7 @@ void cbDisplay()
 	if(g_initData) { //on restart
 		g_initData = false;
 		simulation->init();
+		g_iceParticles = simulation->getIceParticles();
 		time_global = 0;
 		time_current = 0;
 		cycles = CONSOLE_OUTPUT_CYCLES;
@@ -143,6 +146,7 @@ void cbDisplay()
 		if(initMelt) {
 			initMelt = false;
 			cycles = CONSOLE_OUTPUT_CYCLES;
+			std::cout << "\n    # Printing info every " << CONSOLE_OUTPUT_CYCLES << " cycles\n";
 			time_global = 0;
 			time_current = 0;
 		}
@@ -151,7 +155,8 @@ void cbDisplay()
 		particles = simulation->updateParticles();
 		end = timeGetTime();
 		time_current += end - begin;
-		
+		g_iceParticles = particles;
+
 		//job well done!
 		if(particles == 0) {
 			g_melt = false;
@@ -196,16 +201,6 @@ void cbDisplay()
 		glBegin(GL_TRIANGLES);
 		simulation->march();
 		glEnd();
-
-		/* * /
-		GLint hVertex = glGetAttribLocation(g_ProgramId, "a_Position");
-		glVertexAttribPointer(hVertex, 3, GL_FLOAT, GL_FALSE, 0, &triangleNet);
-		glEnableVertexAttribArray(hVertex);
-	
-		glDrawArrays(GL_TRIANGLES, 0, triangleNetIndex/3);
-	
-		glDisableVertexAttribArray(hVertex);
-		/**/
 	}
 
     // Turn off programmable pipeline
@@ -221,6 +216,7 @@ void cbInitGL()
 {
 	simulation = new GPUSimulation();
 	simulation->init();
+	g_iceParticles = simulation->getIceParticles();
 
 	//glEnableVertexAttribArray(1);
 	srand ( time(NULL) );
@@ -338,15 +334,17 @@ void initGUI()
 	TwAddVarCB(controlBar, "gpu", TW_TYPE_BOOLCPP, cbSetGPUUsage, cbGetGPUUsage, NULL, " group='CUDA' label='Compute on:' true='GPU' false='CPU' ");
 	//TwAddVarRW(controlBar, "restart", TW_TYPE_BOOLCPP, &g_initData, " group='PROGRAM' label='Restart: ' true='' false='restart' ");
     
-    TwAddVarRW(controlBar, "wiremode", TW_TYPE_BOOLCPP, &g_WireMode, " group='Render' label='Wire mode' key=w help='Toggle wire mode.' ");
-    TwAddVarRW(controlBar, "march", TW_TYPE_BOOLCPP, &g_useMarchingCubes, " group='Render' label='March. Cubes' help='Toggle marching cubes.' ");
     TwAddVarRW(controlBar, "melt", TW_TYPE_BOOLCPP, &g_melt, " group='Render' label='Melt' key=m help='Start melting' ");
-  
+	TwAddVarRW(controlBar, "wiremode", TW_TYPE_BOOLCPP, &g_WireMode, " group='Render' label='Wire mode' key=w help='Toggle wire mode.' ");
+    TwAddVarRW(controlBar, "march", TW_TYPE_BOOLCPP, &g_useMarchingCubes, " group='Render' label='March. Cubes' help='Toggle marching cubes.' ");
+    
     TwAddVarRW(controlBar, "auto-rotation", TW_TYPE_BOOLCPP, &g_SceneRotEnabled, " group='Scene' label='rotation' key=r help='Toggle scene rotation.' ");
     TwAddVarRW(controlBar, "Translate", TW_TYPE_FLOAT, &g_SceneTraZ, " group='Scene' label='translate' min=1 max=1000 step=10 keyIncr=t keyDecr=T help='Scene translation.' ");
     TwAddVarRW(controlBar, "SceneRotation", TW_TYPE_QUAT4F, &g_SceneRot, " group='Scene' label='rotation' open help='Toggle scene orientation.' ");
-
-	TwAddVarRO(controlBar, "fps", TW_TYPE_FLOAT, &g_fps, " group='FPS' label='Current fps' ");
+	
+	TwAddVarRO(controlBar, "fps", TW_TYPE_FLOAT, &g_fps, " group='INFO' label='Current fps' ");
+	TwAddVarRO(controlBar, "ice", TW_TYPE_FLOAT, &g_iceParticles, " group='INFO' label='Ice particles' ");
+	
 }
 
 /**

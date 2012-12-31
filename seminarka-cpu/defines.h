@@ -50,9 +50,9 @@
  *
  * @{
  */
-#define DATA_WIDTH					(78)
-#define DATA_HEIGHT					(48)
-#define DATA_DEPTH					(38)
+#define DATA_WIDTH					(88)
+#define DATA_HEIGHT					(58)
+#define DATA_DEPTH					(48)
 
 /** Initial air space surrounding ice block */
 #define AIR_VOXELS					2
@@ -92,7 +92,7 @@
  * @{
  */
 /** Output file with correctness test? */
-#define TEST_OUTPUT					true
+#define TEST_OUTPUT					false
 /** Voxel to output */
 #define TEST_VOXEL					DATA_INDEX(20,25,20)
 /** @} */
